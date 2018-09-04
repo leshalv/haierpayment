@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.haiercash.pluslink.capital.common.mybatis.dao.BaseCommonDao">
+
+    <resultMap id="alreadyPositionResult" type="com.haiercash.pluslink.capital.entity.AlreadyPositionOut">
+        <result column="LOAN_COUNT" property="alreadyLoanAmount" jdbcType="DECIMAL"/>
+        <result column="LOAN_DAY" property="alreadyLoanLimitDay" jdbcType="DECIMAL"/>
+        <result column="LOAN_MONTH" property="alreadyLoanLimitMonth" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <select id="selecAlreadyPosition" resultMap="alreadyPositionResult" parameterType="com.haiercash.pluslink.capital.entity.AlreadyPositionIn">
+          WITH tmp AS(
+                       SELECT to_char(UPDATE_DATE, 'yyyymm') YEAR_MONTH,
+                              to_char(UPDATE_DATE, 'yyyymmdd') YEAR_MONTH_DAY,
+                              TRANS_AMT
+                         FROM (SELECT TRANS_AMT,UPDATE_DATE FROM PL_ASSETS_SPLIT_ITEM
+                               WHERE PROJECT_ID = #{projectId,jdbcType=VARCHAR}
+                               AND DEL_FLAG = #{delFlag,jdbcType=VARCHAR}
+                               AND
+                                   STATUS IN
+                                   <foreach collection="statusList" item="item" index="index" open="(" close=")" separator=",">
+                                        #{item}
+                                   </foreach>
+                         )
+                  )
+          SELECT
+              (SELECT NVL(SUM(TRANS_AMT),0) FROM tmp) AS LOAN_COUNT,
+              (SELECT NVL(SUM(TRANS_AMT),0) FROM tmp WHERE YEAR_MONTH=#{curYearMonth,jdbcType=VARCHAR}) AS LOAN_MONTH,
+              (SELECT NVL(SUM(TRANS_AMT),0) FROM tmp WHERE YEAR_MONTH_DAY=#{curYearMonthDay,jdbcType=VARCHAR}) AS LOAN_DAY
+          FROM dual
+    </select>
+    <select id="getUUID" resultType="java.lang.String">
+        SELECT SYS_GUID() AS UUID FROM DUAL
+    </select>
+</mapper>

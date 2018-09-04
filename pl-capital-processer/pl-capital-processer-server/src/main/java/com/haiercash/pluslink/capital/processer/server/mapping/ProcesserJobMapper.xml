@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haiercash.pluslink.capital.processer.server.dao.ProcesserJobDao">
+
+    <!--AND JOB_START_DATE<=#{jobStartDate}-->
+    <!--获取所有待执行的任务-->
+    <select id="selectByJobStatus" resultType="com.haiercash.pluslink.capital.data.ProcesserJob">
+        SELECT ID as id,MODEL_NAME as modelName,JOB_CONTEXT as jobConText,JOB_START_DATE as jobStartDate,JOB_HEART_BEAT
+        as jobHeartBeat,JOB_STATUS as jobStatus,FD_KEY as fdKey,RUN_TIME as runTime
+        FROM PL_PROCESSER_JOB WHERE JOB_STATUS = '1' AND DEL_FLAG=#{delFlag}
+        AND MODEL_NAME = #{modelName}
+        <![CDATA[
+        AND JOB_START_DATE BETWEEN (#{jobStartDate}) AND (#{jobEndDate})
+        ]]>
+    </select>
+
+    <select id="selectByModelNameAndJobStatus" resultType="com.haiercash.pluslink.capital.data.ProcesserJob">
+        SELECT ID as id,MODEL_NAME as modelName,JOB_CONTEXT as jobConText,JOB_START_DATE as jobStartDate,JOB_HEART_BEAT
+        as jobHeartBeat,JOB_STATUS as jobStatus,FD_KEY as fdKey,RUN_TIME as runTime
+        FROM PL_PROCESSER_JOB WHERE JOB_STATUS = '1' AND DEL_FLAG=#{delFlag}
+        <![CDATA[
+        AND JOB_START_DATE<=#{jobStartDate}
+
+        ]]>
+    </select>
+
+    <update id="updateStatusById">
+        UPDATE PL_PROCESSER_JOB
+        <set>
+            JOB_STATUS = '0',
+            RUN_TIME = #{runTime}
+        </set>
+        where
+        ID = #{id,jdbcType=VARCHAR} AND DEL_FLAG=#{delFlag}
+    </update>
+
+    <update id="updateNextDateById">
+        UPDATE PL_PROCESSER_JOB
+        <set>
+            JOB_START_DATE = #{jobStartDate},
+            RUN_TIME = #{runTime}
+        </set>
+        where
+        ID = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateErrorInfo">
+        UPDATE PL_PROCESSER_JOB SET RUN_ERROR_STATUS=#{runErrorStatus},RUN_ERROR_MSG=#{runErrorMsg},JOB_STATUS = '0',RUN_TIME=#{runTime} WHERE ID=#{id} AND DEL_FLAG=#{delFlag}
+    </update>
+
+    <!-- 新增 -->
+    <insert id="insertProcesserJob" parameterType="com.haiercash.pluslink.capital.data.ProcesserJob">
+        <![CDATA[
+
+        insert into PL_PROCESSER_JOB(ID,model_name,JOB_CONTEXT,JOB_START_DATE,JOB_HEART_BEAT,JOB_STATUS,FD_KEY,del_flag,CREATE_DATE,UPDATE_DATE,CREATE_BY,RUN_TIME,MEMO1)
+        values(#{id,jdbcType=VARCHAR},#{modelName,jdbcType=VARCHAR},#{jobConText,jdbcType=VARCHAR},#{jobStartDate,jdbcType=VARCHAR},
+        #{jobHeartBeat,jdbcType=INTEGER},'1',#{fdKey,jdbcType=VARCHAR},'NORMAL',#{createDate},#{updateDate},#{createBy},#{runTime},#{memo1})
+        ]]>
+    </insert>
+
+
+</mapper>

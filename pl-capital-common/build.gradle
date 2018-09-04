@@ -1,0 +1,30 @@
+group = 'com.haiercash.pluslink.capital'
+version = '1.0.0'
+
+jar {
+    baseName = project.name
+    version = project.version
+    if (!project.releasePublish) {
+        version = version + "-SNAPSHOT"
+    }
+}
+
+dependencies {
+    compile project(":pl-capital-base")
+    compile("org.apache.commons:commons-digester3:3.2")
+    compile("com.haiercash:jxls-poi:1.0.9.1")
+    compile("com.haiercash:jxls-reader:2.0.2.5")
+    compile("org.apache.poi:poi-ooxml:3.12")
+    compile("org.apache.poi:poi:3.12")
+//    compile("org.apache.poi:poi-ooxml:3.12")
+    compile("org.jxls:jxls:2.3.0") {
+        exclude (module: "logback-core")
+    }
+   // compile 'io.shardingjdbc:sharding-jdbc-core-spring-boot-starter:2.0.2'
+    compile 'com.zaxxer:HikariCP-java7:2.4.11'
+    compile 'org.apache.commons:commons-dbcp2:2.1.1'
+    // jedis
+    compile("redis.clients:jedis:2.9.0")
+
+}
+apply from: '../maven_push.gradle'

@@ -1,0 +1,36 @@
+<!-- 合作机构类型list -->
+<div data-container="agencyConfigDetail">
+    <component is="bv-table" :key="tags.tableId" v-bind="config"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const'], function($, util, Const) {
+        var param = util.cache('modal');
+        var vm = util.bind({
+            container: 'agencyConfigDetail',
+            data: {
+                tags: {
+                    tableId: 'agencyConfigDetailTable'
+                },
+                config: {
+                    url: '/agency/getAgencyDetail?agencyId='+param.agencyId,
+                    orders: 'id desc',
+                    columns: [
+                        {
+                            name: 'agencyId',
+                            head: '合作机构编码'
+                        },
+                        {
+                            name: 'agencyName',
+                            head: '合作机构名称'
+                        },
+                        {
+                            name: 'projectNum',
+                            head: '合作项目数量'
+                        }
+                    ]
+                }
+            }
+        });
+    });
+</script>
+

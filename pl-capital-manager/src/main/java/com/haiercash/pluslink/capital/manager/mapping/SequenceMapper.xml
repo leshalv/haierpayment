@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haiercash.pluslink.capital.manager.dao.SequenceDao">
+    <!--获取导入请求批次的序列号-->
+    <select id="getImMsgRequestBatchSequence" resultType="java.lang.String">
+        select lpad(SEQ_IM_MSG_REQUEST_BATCH.nextval,10,'0') from dual
+    </select>
+
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haiercash.pluslink.capital.processer.server.dao.ProcesserFlowLogDao">
+    <sql id="processerFlowColumns">
+		ID,
+        APPL_SEQ,
+        HANDLER_NAME,
+        HANDLER_ROUTING,
+        IS_ERROR,
+        EXCEPTION,
+        CREATE_DATE,
+        FD_INDEX
+	</sql>
+
+
+    <insert id="insertProcesserFlowList" parameterType="com.haiercash.pluslink.capital.data.ProcesserFlowLog">
+        INSERT INTO PL_PROCESSER_FLOW_LOG(
+        <include refid="processerFlowColumns"/>
+        )
+        <foreach collection="list" item="req" index="index" separator="UNION">
+            select
+            #{req.id,jdbcType=VARCHAR},
+            #{req.applSeq,jdbcType=VARCHAR},
+            #{req.handlerName,jdbcType=DECIMAL},
+            #{req.handlerRouting,jdbcType=VARCHAR},
+            #{req.isError,jdbcType=VARCHAR},
+            #{req.exception,jdbcType=VARCHAR},
+            #{req.createDate,jdbcType=DATE},
+            #{req.fdIndex,jdbcType=INTEGER}
+            from dual
+        </foreach>
+    </insert>
+
+    <select id="selectByApplSeq" resultType="com.haiercash.pluslink.capital.data.ProcesserFlowLog">
+        SELECT
+        <include refid="processerFlowColumns"/>
+        FROM PL_PROCESSER_FLOW_LOG WHERE APPL_SEQ=#{applSeq} ORDER BY FD_INDEX DESC
+    </select>
+
+
+</mapper>

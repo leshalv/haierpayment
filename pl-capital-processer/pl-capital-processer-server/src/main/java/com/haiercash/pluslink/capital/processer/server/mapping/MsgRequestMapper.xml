@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haiercash.pluslink.capital.processer.server.dao.MsgRequestDao">
+
+    <resultMap id="msgRequest" type="com.haiercash.pluslink.capital.data.MsgRequest"/>
+
+    <!-- 更新消息发送请求的状态  -->
+    <update id="updateRequestStatus">
+        UPDATE msg_request
+        <set>
+            <if test="req.status != null">
+                status = #{req.status},
+            </if>
+            <if test="req.modifyTime != null">
+                <![CDATA[
+                modify_time = #{req.modifyTime},
+                ]]>
+            </if>
+        </set>
+        <where>
+            <if test="req.id != null">
+                id = #{req.id}
+            </if>
+            <if test="origStatus != null">
+                AND status = #{origStatus}
+            </if>
+            AND DEL_FLAG='NORMAL'
+        </where>
+    </update>
+
+
+    <!--* 查询范围时间内失败的请求记录-->
+    <select id="findMsgRequestByStatus" resultType="com.haiercash.pluslink.capital.data.MsgRequest">
+        SELECT * FROM msg_request
+        <where>
+            <if test="startTime != null">
+                <![CDATA[
+                CREATE_TIME >= #{startTime}
+                ]]>
+            </if>
+            <if test="failEndTime != null">
+                <![CDATA[
+                AND modify_time <= #{failEndTime}
+                ]]>
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+</mapper>

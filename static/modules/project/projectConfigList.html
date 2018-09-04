@@ -1,0 +1,152 @@
+<div data-container="projectConfigList">
+    <component is="bv-table" :key="tags.tableId" v-bind="config"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const'], function($, util, Const) {
+        /*var bankList = {};
+        var dictAll = Const.dicts;
+        $.ajax({
+            type: 'post',
+            url: '/capitalmanage/api/message/project/getBankList',
+            success: function(data) {
+                for(var i=0;i<data.length;i++){
+                    bankList[data[i]['id']]=data[i]['bankName'];
+                }
+                dictAll['bankList']=bankList;
+            }
+        });*/
+        var vm = util.bind({
+            container: 'projectConfigList',
+            data: {
+                tags: {
+                    tableId: 'projectConfigTable'
+                },
+                config: {
+                    entityName: 'CooperationProject',
+                    keys: 'id',
+                    select: 'checkbox',
+                    orders: 'createDate desc',
+                    filterLayout: 'filterMore',
+                    filterMore: true,
+                    columns: [
+                        {
+                            name: 'id',
+                            head: 'ID',
+                            hide: true
+                        },
+                        {
+                            name: 'projectName',
+                            head: '项目名称'
+                        },
+                        {
+                            name: 'projectType',
+                            head: '合作模式',
+                            format: 'dict',
+                            filter: {
+                                type: 'select'
+                            },
+                            config: {
+                                preset: 'json',
+                                choose: Const.dicts.PL0402
+                            }
+                        },
+                        {
+                            name: 'projectStatus',
+                            head: '合作状态',
+                            format: 'dict',
+                            filter: {
+                                type: 'select'
+                            },
+                            config: {
+                                preset: 'json',
+                                choose: Const.dicts.PL0201
+                            }
+                        },
+                        {
+                            name: 'isAssure',
+                            head: '是否担保',
+                            format: 'dict',
+                            filter: {
+                                type: 'select'
+                            },
+                            config: {
+                                preset: 'json',
+                                choose: Const.dicts.PL0109
+                            }
+                        },
+                        {
+                            name: 'effectTime',
+                            head: '项目生效时间'
+                        },
+                        {
+                            name: 'projectPriority',
+                            head: '优先级'
+                        },
+                        {
+                            name: 'createBy',
+                            head: '创建人'
+                        },
+                        {
+                            name: 'createDate',
+                            head: '创建时间'
+                        }
+                    ],
+                    operates: [
+                        {
+                            text: '新增',
+                            show: 'none',
+                            icon: 'icon-add',
+                            preset: 'insert',
+                            url: 'modules/project/projectConfigAdd.html'
+                        },
+                        {
+                            text: '编辑',
+                            show: 'one',
+                            icon:'icon-edit',
+                            preset: 'update',
+                            click: function(event, tableId, entityName, selected) {
+                                util.modal({
+                                    data: {
+                                        data: selected[0]
+                                    },
+                                    url: 'modules/project/projectConfigEdit.html'
+                                });
+                            }
+                        },
+                        {
+                            text: '删除',
+                            show: 'oneOrMore',
+                            icon:'icon-delete',
+                            preset: 'delete',
+                            click:function ($element, name, entityName, selected) {
+                                var idList=[];
+                                for(var i=0;i<selected.length;i++){
+                                    idList.push(selected[i]);
+                                }
+                                util.confirm({
+                                    url: '/project/delProject',
+                                    data: idList,
+                                    refresh: true,
+                                    vm: util.vm(vm, vm.tags.tableId)
+                                })
+                            }
+                        },
+                        {
+                            text: '查看详情',
+                            show: 'one',
+                            click: function(event, tableId, entityName, selected) {
+                                util.modal({
+                                    data: {
+                                        data: selected[0]
+                                    },
+                                    url: 'modules/project/projectConfigDetail.html'
+                                });
+                            }
+                        }
+                    ]
+                }
+            }
+        });
+    });
+</script>
+

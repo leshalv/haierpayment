@@ -1,0 +1,201 @@
+<div data-container="listMsgRequest">
+    <component is="bv-table" :key="tags.tableId" v-bind="config"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const'], function($, util, Const) {
+        var vm = util.bind({
+            container: 'listMsgRequest',
+            data: {
+                tags: {
+                    tableId: 'msgRequestTable'
+                },
+                config: {
+                    entityName: 'msgRequest',
+                    keys: 'id',
+                    select: 'checkbox',
+                    orders: 'createTime desc',
+                    filterLayout: 'filterMore',
+                    loadType: 'false',
+                    filterMore: true,
+                    columns: [
+                        {
+                            name: 'id',
+                            head: 'ID',
+                            filter: '='
+                        },
+                        {
+                            name: 'requestNo',
+                            head: '请求号',
+                            filter: '='
+                        },
+                        {
+                            name: 'institution',
+                            head: '系统标识'
+                        },
+                        {
+                            name: 'bizType',
+                            head: '业务类型名称',
+                            format: 'dict',
+                            config: {
+                                entityName: 'msgBiztypeConfig',
+                                code: 'bizType',
+                                desc: 'bizName'
+                            }
+                        },
+                        {
+                            name: 'bizType',
+                            head: '业务类型',
+                            filter: '='
+                        },
+                        {
+                            name: 'subBizType',
+                            head: '细分业务类型'
+                        },
+                        {
+                            name: 'bizId',
+                            head: '业务对象ID',
+                            filter: '='
+                        },
+                        {
+                            name: 'productCode',
+                            head: '产品编号',
+                            filter: '='
+                        },
+                        {
+                            name: 'channel',
+                            head: '渠道类型',
+                            filter: '='
+                        },
+                        {
+                            name: 'channel',
+                            head: '渠道类型名称',
+                            format: 'dict',
+                            config: {
+                                entityName: 'msgChannelConfig',
+                                code: 'channelType',
+                                desc: 'channelName'
+                            }
+                        },
+                        {
+                            name: 'channelNo',
+                            head: '渠道号'
+                        },
+                        {
+                            name: 'sendConfigId',
+                            head: '消息派发ID',
+                            filter: '='
+                        },
+                        {
+                            name: 'pushType',
+                            head: '推送类型',
+                            format: 'dict',
+                            filter: {
+                                type: 'select'
+                            },
+                            config: {
+                                preset: 'enums',
+                                choose: Const.enums.pushTypeEnum
+                            }
+                        },
+                        {
+                            name: 'status',
+                            head: '处理状态',
+                            format: 'dict',
+                            filter: {
+                                type: 'select'
+                            },
+                            config: {
+                                preset: 'enums',
+                                choose: Const.enums.requestStatusEnum
+                            }
+                        },
+                        {
+                            name: 'pushMsgType',
+                            head: '推送消息类型'
+                        },
+                        {
+                            name: 'actionType',
+                            head: '动作类型'
+                        },
+                        {
+                            name: 'actionValue',
+                            head: '动作代码'
+                        },
+                        {
+                            name: 'bizContent',
+                            head: '业务数据体'
+                        },
+                        {
+                            name: 'useTmpl',
+                            head: '是否使用模板',
+                            format: 'dict',
+                            filter: {
+                                type: 'radio'
+                            },
+                            config: {
+                                preset: 'enums',
+                                choose: Const.enums.yesNoEnum
+                            }
+                        },
+                        {
+                            name: 'msgTitle',
+                            head: '消息标题'
+                        },
+                        {
+                            name: 'msgContent',
+                            head: '消息内容',
+                            format: 'truncate(15)',
+                            title: 'true'
+                        },
+                        {
+                            name: 'userId',
+                            head: '发送用户',
+                            filter: '='
+                        },
+                        {
+                            name: 'custom',
+                            head: '自定义字段'
+                        },
+                        {
+                            name: 'requestTime',
+                            head: '请求时间'
+                        },
+                        {
+                            name: 'createTime',
+                            head: '创建时间'
+                        },
+                        {
+                            name: 'modifyTime',
+                            head: '修改时间',
+                            filter: {
+                                operate: 'between',
+                                type: 'date'
+                            },
+                            config: {
+                                format: 'datetime',
+                                defaultValueFrom: util.date('date') + ' 00:00:00'
+                            }
+                        },
+                        {
+                            name: 'operate',
+                            head: '操作',
+                            type: 'operate',
+                            align: 'center',
+                            operates: [
+                                {
+                                    text: '查看消息发送用户',
+                                    click: function(event, tableId, entityName, selected) {
+                                        util.modal({
+                                            url: 'modules/msgRequest/listMsgRequestUser.html?requestId=' + selected[0].id
+                                        });
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        });
+    });
+</script>
+

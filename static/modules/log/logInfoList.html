@@ -1,0 +1,62 @@
+<!-- log -->
+<div data-container="logInfoList">
+    <component is="bv-table" :key="tags.tableId" v-bind="config"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const'], function($, util, Const) {
+        var vm = util.bind({
+            container: 'logInfoList',
+            data: {
+                tags: {
+                    tableId: 'logInfoTable'
+                },
+                config: {
+                    entityName: 'LogInfo',
+                    keys: 'id',
+                    select: 'checkbox',
+                    orders: 'createDate desc',
+                    filterLayout: 'filterMore',
+                    filterMore: true,
+                    columns: [
+                        {
+                            name: 'id',
+                            head: 'ID'
+                        },
+                        {
+                            name: 'businessType',
+                            head: '业务类型',
+                            format: 'dict',
+                            filter: {
+                                type: 'select'
+                            },
+                            config: {
+                                preset: 'json',
+                                choose: Const.dicts.PL0104
+                            }
+                        },
+                        {
+                            name: 'logName',
+                            head: '日志名称'
+                        },
+                        {
+                            name: 'logContent',
+                            head: '内容'
+                        },
+                        {
+                            name: 'createBy',
+                            head: '操作人'
+                        },
+                        {
+                            name: 'createDate',
+                            head: '操作时间'
+                        }
+                    ],
+                    operates: [
+
+                    ]
+                }
+            }
+        });
+    });
+</script>
+

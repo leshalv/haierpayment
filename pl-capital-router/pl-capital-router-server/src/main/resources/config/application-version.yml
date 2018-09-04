@@ -1,0 +1,8 @@
+router:
+    version:
+      project:
+        app: ${application.name}-${haiercash.pl.profile}:${application.version}
+        cache: 1.0.0
+      server:
+        RouterController: v1
+        GeneralInfoController: v1

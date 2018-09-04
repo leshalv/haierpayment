@@ -1,0 +1,49 @@
+<div v-cloak data-container="editAgencyTypeConfig">
+    <component is="bv-form" :key="tags.formId" v-bind="config"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const'], function ($, util, Const) {
+        var param = util.cache('modal');
+		var vm = util.bind({
+			container: 'editAgencyTypeConfig',
+			data: {
+				tags: {
+					formId: 'editAgencyTypeConfigForm'
+				},
+				config: {
+					title: '机构类别配置',
+					saveUrl: '/agencyType/updateAgencyType',
+					formGenerator: 'agencyTypeId',
+					columns: [
+						{
+							name: 'agencyTypeId',
+							head: '类别编码',
+							config: {
+								value: param.agencyTypeId
+							},
+							edit: {
+							    type: 'hidden'
+							}
+						},
+						{
+							name: 'agencyTypeName',
+							head: '类别名称',
+							config: {
+								value: param.agencyTypeName
+							}
+						}
+					],
+					operates: [
+						{
+                            text: '保存',
+                            clazz: 'btn-primary',
+                            icon: 'icon-save',
+                            loading: '处理中...',
+                            preset: 'save'
+                        }
+					]
+				}
+			}
+		});
+	});
+</script>

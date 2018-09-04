@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haiercash.pluslink.capital.processer.server.dao.AccountTransactionDao">
+    <sql id="accountTransactionColumns">
+      ID,
+        TRANS_NO,
+        CONTEXT_TRANS_NO,
+        ORDER_ID,
+      BIZ_TYPE,
+      TRADE_LINK,
+        APP_ID,
+      OPERATOR_ID,
+        BIZ_ID,
+      IS_BOUNCED,
+        REQUEST_TIME,
+      IS_CORRECT,
+        CREATE_BY,
+      UPDATE_BY,
+      CREATE_DATE,
+      UPDATE_DATE,
+        DEL_FLAG,
+      ACCOUNTING_STATUS,
+        CRM_TYPE,
+        CRM_NO,
+        CONTRACT_NO
+    </sql>
+
+    <insert id="insertAccountTransaction" parameterType="com.haiercash.pluslink.capital.data.AccountTransaction">
+    INSERT INTO PL_ACCOUNT_TRANSACTION(
+      ID,
+      TRANS_NO,
+      CONTEXT_TRANS_NO,
+      ORDER_ID,
+      BIZ_TYPE,
+      TRADE_LINK,
+      APP_ID,
+      OPERATOR_ID,
+      BIZ_ID,
+      IS_BOUNCED,
+      REQUEST_TIME,
+      IS_CORRECT,
+      CREATE_BY,
+      UPDATE_BY,
+      CREATE_DATE,
+      UPDATE_DATE,
+      DEL_FLAG,
+      ACCOUNTING_STATUS,
+      CRM_TYPE,
+      CRM_NO,
+      CONTRACT_NO
+    )VALUES
+    (
+      #{id,jdbcType=VARCHAR},
+      #{transNo,jdbcType=VARCHAR},
+      #{contextTransNo,jdbcType=VARCHAR},
+      #{orderId,jdbcType=VARCHAR},
+      #{bizType,jdbcType=VARCHAR},
+      #{tradeLink,jdbcType=VARCHAR},
+      #{appId,jdbcType=VARCHAR},
+      #{operatorId,jdbcType=VARCHAR},
+      #{bizId,jdbcType=VARCHAR},
+      #{isBounced,jdbcType=VARCHAR},
+      #{requestTime,jdbcType=VARCHAR},
+      #{isCorrect,jdbcType=VARCHAR},
+      #{createBy,jdbcType=VARCHAR},
+      #{updateBy,jdbcType=VARCHAR},
+      #{createDate},
+      #{updateDate},
+      #{delFlag,jdbcType=VARCHAR},
+      #{accountingStatus,jdbcType=VARCHAR},
+      #{crmType,jdbcType=VARCHAR},
+      #{crmNo,jdbcType=VARCHAR},
+        #{contractNo,jdbcType=VARCHAR}
+      )
+    </insert>
+    <select id="getSequence" resultType="java.lang.String" flushCache="true" useCache="false">
+        SELECT
+        LPAD(SUBSTR(PL_ACCOUNT_TRANS_SEQUENCE.NEXTVAL,greatest(-8,-length(PL_ACCOUNT_TRANS_SEQUENCE.NEXTVAL)),8),8,'0')
+        FROM dual
+    </select>
+
+    <update id="updateAccountingStatuById" parameterType="com.haiercash.pluslink.capital.data.AccountTransaction">
+        UPDATE PL_ACCOUNT_TRANSACTION SET ACCOUNTING_STATUS = #{accountingStatus},UPDATE_DATE = #{updateDate}
+        WHERE ID = #{id}
+        AND DEL_FLAG=#{delFlag}
+    </update>
+
+    <select id="selectByAccountingStatus" resultType="com.haiercash.pluslink.capital.data.AccountTransaction">
+        select
+        <include refid="accountTransactionColumns"/>
+        from PL_ACCOUNT_TRANSACTION where ACCOUNTING_STATUS=#{accountingStatus} AND DEL_FLAG=#{delFlag}
+    </select>
+</mapper>

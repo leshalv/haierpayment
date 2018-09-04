@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haiercash.pluslink.capital.processer.server.dao.ProcessMakeLoansDao">
+
+    <select id="selectByApplSeq" resultType="com.haiercash.pluslink.capital.data.ProcessMakeLoans">
+        SELECT id,appl_seq,assets_split_id,assets_split_item_id,org_corp_msg_id,apply_dt,status FROM pl_processer_make_loans
+        where appl_seq=#{applSeq} AND DEL_FLAG=#{delFlag}
+    </select>
+</mapper>

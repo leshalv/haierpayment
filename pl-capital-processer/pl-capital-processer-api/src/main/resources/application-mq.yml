@@ -1,0 +1,109 @@
+spring:
+  rabbitmq:           # rabbitmq连接
+    addresses: 10.164.197.208:5672,10.164.197.228:5672
+    password: admin123
+    username: admin
+    publisher-confirms: true
+  cloud:              # SpringCloudStream配置
+    stream:
+      default:
+        consumer:
+          concurrency: 10
+      bindings:
+        outputMsgRequestChannel:
+          destination: HCMessage-MSG-REQEUEST-${haiercash.HCMessage.profile}-${haiercash.HCMessage.version}
+          contentType: application/json
+          producer:
+            requiredGroups: hc.message
+        outputSignVipRequestChannel: # 签约短信专用队列
+          destination: HCMessage-MSG-REQEUEST-${haiercash.HCMessage.profile}-${haiercash.HCMessage.version}
+          contentType: application/json
+          producer:
+            requiredGroups: hc.message.sign
+        inputMsgRequestChannel:
+          destination: HCMessage-MSG-REQEUEST-${haiercash.HCMessage.profile}-${haiercash.HCMessage.version}
+          contentType: application/json
+          group: hc.message
+
+        inputSignVipRequestChannel: # 签约短信专用队列
+          destination: HCMessage-MSG-REQEUEST-${haiercash.HCMessage.profile}-${haiercash.HCMessage.version}
+          contentType: application/json
+          group: hc.message.sign
+        # 消息发送记录队列-通用
+        outputMsgRecordChannelCommon:
+          destination: HCMessage-MSG-RECORD-${haiercash.HCMessage.profile}-${haiercash.HCMessage.version}
+          contentType: application/json
+          producer:
+            requiredGroups: hc.message
+        outputSignVipRecordChannel: # 签约短信专用队列
+          destination: HCMessage-MSG-RECORD-${haiercash.HCMessage.profile}-${haiercash.HCMessage.version}
+          contentType: application/json
+          producer:
+            requiredGroups: hc.message.sign
+        inputMsgRecordChannelCommon:
+          destination: HCMessage-MSG-RECORD-${haiercash.HCMessage.profile}-${haiercash.HCMessage.version}
+          contentType: application/json
+          group: hc.message
+        inputSignVipRecordChannel: # 签约短信专用队列
+          destination: HCMessage-MSG-RECORD-${haiercash.HCMessage.profile}-${haiercash.HCMessage.version}
+          contentType: application/json
+          group: hc.message.sign
+        # crm主动营销队列
+        inputCrmActiveMarketChannel:
+          destination: HCMessage-Server-${haiercash.HCMessage.profile}-${haiercash.HCMessage.version}
+          contentType: application/json
+          group: hc.message
+        # 外部通道接收消息队列
+        inputCommonMessageSendChannel:
+          destination: HCMessage-Server-${haiercash.HCMessage.profile}-${haiercash.HCMessage.version}
+          contentType: application/json
+          group: hc.message.common
+      rabbit:
+        bindings:
+          outputMsgRequestChannel:
+            producer:
+              bindingRoutingKey: COMMON
+              routingKeyExpression: '''COMMON'''
+              maxPriority: 255
+          outputSignVipRequestChannel:
+            producer:
+              bindingRoutingKey: SIGN
+              routingKeyExpression: '''SIGN'''
+              maxPriority: 255
+          inputMsgRequestChannel:
+            consumer:
+              bindingRoutingKey: COMMON
+              maxPriority: 255
+          inputSignVipRequestChannel:
+            consumer:
+              bindingRoutingKey: SIGN
+              maxPriority: 255
+          # 消息发送记录队列-通用
+          outputMsgRecordChannelCommon:
+            producer:
+              bindingRoutingKey: COMMON
+              routingKeyExpression: '''COMMON'''
+              maxPriority: 255
+          outputSignVipRecordChannel:
+            producer:
+              bindingRoutingKey: SIGN
+              routingKeyExpression: '''SIGN'''
+              maxPriority: 255
+          inputMsgRecordChannelCommon:
+            consumer:
+              bindingRoutingKey: COMMON
+              maxPriority: 255
+          inputSignVipRecordChannel:
+            consumer:
+              bindingRoutingKey: SIGN
+              maxPriority: 255
+          # crm主动营销队列
+          inputCrmActiveMarketChannel:
+            consumer:
+              bindingRoutingKey: ACTIVITY.MARKET.CONTROL
+              maxPriority: 255
+          # 外部通道接收消息队列
+          inputCommonMessageSendChannel:
+            consumer:
+              bindingRoutingKey: COMMON
+              maxPriority: 255

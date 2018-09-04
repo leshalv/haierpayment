@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bf="http://www.jbinfo.cn/schema/bus"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.jbinfo.cn/schema/bus
+        http://www.jbinfo.cn/schema/bus.xsd">
+    <bf:busFactory/>
+
+    <!--##################################### start spring bean ######################################-->
+
+    <bean id="creditApplyHandler"
+          class="com.haiercash.pluslink.capital.processer.server.pvm.handler.CreditApplyHandler"/>
+
+    <bean id="loanBackHandler" class="com.haiercash.pluslink.capital.processer.server.pvm.handler.LoanBackHandler"/>
+
+    <bean id="paymentGatewayBackHandler"
+          class="com.haiercash.pluslink.capital.processer.server.pvm.handler.PaymentGatewayBackHandler"/>
+
+    <bean id="end" class="com.haiercash.pluslink.capital.processer.server.pvm.handler.EndHandler"/>
+
+    <!--##################################### end spring bean ######################################-->
+
+
+    <!--授信申请-->
+    <bf:bus id="creditApplyBus" start="creditApplyCheckStop" finish="end"/>
+    <bf:stop id="creditApplyCheckStop" ref="creditApplyHandler" method="checkQuota"/>
+
+    <!--授信实时返回检测-->
+    <bf:bus id="creditApplyBackingBus" start="creditApplyBacking" finish="end"/>
+    <bf:stop id="creditApplyBacking" ref="creditApplyHandler" method="creditApplyBacking"/>
+
+
+    <!--任务轮训、授信回调-->
+    <bf:bus id="creditApplyBackBus" start="approvalBackCheckStop" finish="end"/>
+    <bf:stop id="approvalBackCheckStop" ref="creditApplyHandler" method="creditApplyBackCheck"/>
+
+    <!--前置放款回调-->
+    <bf:bus id="loanBackBus" start="loanBackStop" finish="end"/>
+    <bf:stop id="loanBackStop" ref="loanBackHandler" method="doStart">
+    </bf:stop>
+
+    <!--支付网关回调-->
+    <bf:bus id="paymentGatewayBackBus" start="paymentGatewayBackStop" finish="end"/>
+    <bf:stop id="paymentGatewayBackStop" ref="paymentGatewayBackHandler" method="doStart"/>
+
+
+</beans>

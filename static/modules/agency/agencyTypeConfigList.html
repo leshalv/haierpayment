@@ -1,0 +1,94 @@
+<!-- 合作机构类型list -->
+<div data-container="listAgencyTypeConfig">
+    <component is="bv-table" :key="tags.tableId" v-bind="config"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const'], function($, util, Const) {
+        var vm = util.bind({
+            container: 'listAgencyTypeConfig',
+            data: {
+                tags: {
+                    tableId: 'agencyTypeConfigTable'
+                },
+                config: {
+                    entityName: 'entityName',
+                    url: '/agencyType/getAgencyTypeList',
+                    select: 'checkbox',
+                    orders: 'agencyTypeId desc',
+                    filterLayout: 'filterMore',
+                    filterMore: true,
+                    columns: [
+                        {
+                            name: 'agencyTypeId',
+                            head: '类别编码',
+                            filter: '='
+                        },
+                        {
+                            name: 'agencyTypeName',
+                            head: '类别名称'
+                        },
+                        {
+                            name: 'agencyNum',
+                            head: '合作机构数量'
+                        }
+                    ],
+                    operates: [
+                        {
+                            text: '新增',
+                            show: 'none',
+                            icon: 'icon-add',
+                            preset: 'insert',
+                            url: 'modules/agency/agencyTypeConfigAdd.html'
+                        },
+                        {
+                            text: '编辑',
+                            show: 'one',
+                            icon:'icon-edit',
+                            preset: 'update',
+                            click: function(event, tableId, entityName, selected) {
+                                util.modal({
+                                    data: {
+                                        agencyTypeId: selected[0].agencyTypeId,
+                                        agencyTypeName: selected[0].agencyTypeName
+                                    },
+                                    url: 'modules/agency/agencyTypeConfigEdit.html'
+                                });
+                            }
+                        },
+                        {
+                            text: '删除',
+                            show: 'oneOrMore',
+                            icon:'icon-delete',
+                            preset: 'delete',
+                            click:function ($element, name, entityName, selected) {
+                                var idList=[];
+                                for(var i=0;i<selected.length;i++){
+                                    idList.push(selected[i]);
+                                }
+                                util.confirm({
+                                    url: '/agencyType/delAgencyType',
+                                    data: idList,
+                                    refresh: true,
+                                    vm: util.vm(vm, vm.tags.tableId)
+                                })
+                            }
+                        },
+                        {
+                            text: '查看',
+                            show: 'one',
+                            click: function(event, tableId, entityName, selected) {
+                                util.modal({
+                                    data: {
+                                        agencyTypeId: selected[0].agencyTypeId
+                                    },
+                                    url: 'modules/agency/agencyTypeConfigDetail.html'
+                                });
+                            }
+                        }
+                    ]
+                }
+            }
+        });
+    });
+</script>
+

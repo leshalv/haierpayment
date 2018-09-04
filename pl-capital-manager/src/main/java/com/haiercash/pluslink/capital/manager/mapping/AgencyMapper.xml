@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haiercash.pluslink.capital.manager.dao.AgencyDao">
+
+    <select id="getAgencyDetail" parameterType="String" resultType="com.haiercash.pluslink.capital.data.CooperationAgency">
+
+    </select>
+
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.haiercash.pluslink.capital.data.CooperationAgency">
+        INSERT INTO PL_COOPERATION_AGENCY
+        (ID,AGENCY_NAME,
+        <if test="agencyLiaisons != null and agencyLiaisons != ''">
+            AGENCY_LIAISONS,
+        </if>
+        <if test="agencyLiaisonsMobile != null and agencyLiaisonsMobile != ''">
+            AGENCY_LIAISONS_MOBILE,
+        </if>
+        AGENCY_PRIORITY,COOPERATION_STATUS,AGENCY_TYPE,CREATE_DATE,CREATE_BY,DEL_FLAG)
+        VALUES(sys_guid(),#{agencyName},
+        <if test="agencyLiaisons != null and agencyLiaisons != ''">
+            #{agencyLiaisons},
+        </if>
+        <if test="agencyLiaisonsMobile != null and agencyLiaisonsMobile != ''">
+            #{agencyLiaisonsMobile},
+        </if>
+        #{agencyPriority},#{cooperationStatus},#{agencyType},#{createDate,jdbcType=TIMESTAMP},#{createBy},#{delFlag})
+    </insert>
+    <!-- 根据类别ID更新 -->
+    <update id="update" parameterType="com.haiercash.pluslink.capital.data.CooperationAgency">
+        UPDATE PL_COOPERATION_AGENCY SET
+            AGENCY_NAME=#{agencyName},
+        <if test="agencyLiaisons != null and agencyLiaisons != ''">
+            AGENCY_LIAISONS=#{agencyLiaisons},
+        </if>
+        <if test="agencyLiaisonsMobile != null and agencyLiaisonsMobile != ''">
+            AGENCY_LIAISONS_MOBILE=#{agencyLiaisonsMobile},
+        </if>
+        AGENCY_PRIORITY=#{agencyPriority},
+        COOPERATION_STATUS=#{cooperationStatus},
+        AGENCY_TYPE=#{agencyType},
+        UPDATE_DATE=#{updateDate},
+        UPDATE_BY=#{createBy},
+        DEL_FLAG=#{delFlag}
+        WHERE ID=#{id}
+    </update>
+</mapper>

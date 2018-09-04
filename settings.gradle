@@ -1,0 +1,28 @@
+rootProject.name = 'pl-capital'
+include 'pl-capital-base'
+include 'pl-capital-common'
+include 'pl-capital-manager'
+
+include 'pl-capital-router'
+
+include 'pl-capital-router:pl-capital-router-api'
+findProject(':pl-capital-router:pl-capital-router-api')?.name = 'pl-capital-router-api'
+
+include 'pl-capital-router:pl-capital-router-inside-api'
+findProject(':pl-capital-router:pl-capital-router-inside-api')?.name = 'pl-capital-router-inside-api'
+
+include 'pl-capital-router:pl-capital-router-server'
+findProject(':pl-capital-router:pl-capital-router-server')?.name = 'pl-capital-router-server'
+
+
+include 'pl-capital-processer'
+
+include 'pl-capital-processer:pl-capital-processer-api'
+findProject(':pl-capital-processer:pl-capital-processer-api')?.name = 'pl-capital-processer-api'
+
+include 'pl-capital-processer:pl-capital-processer-inside-api'
+findProject(':pl-capital-processer:pl-capital-processer-inside-api')?.name = 'pl-capital-processer-inside-api'
+
+include 'pl-capital-processer:pl-capital-processer-server'
+findProject(':pl-capital-processer:pl-capital-processer-server')?.name = 'pl-capital-processer-server'
+

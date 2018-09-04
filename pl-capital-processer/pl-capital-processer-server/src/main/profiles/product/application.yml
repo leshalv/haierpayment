@@ -1,0 +1,233 @@
+haiercash:
+  pl:
+    profile: product
+    version: 1-0-0
+    name: ${application.name}
+server:
+  port: 6002
+  undertow:
+    io-threads: 2
+    worker-threads: 168
+    buffer-size: 1024
+    buffers-per-region: 1024
+    direct-buffers: true
+logging:
+   level:
+     root: INFO
+     org.springframework.security: INFO
+     com.haiercash: INFO
+info:
+  name: ${haiercash.pl.name}
+  version: ${haiercash.pl.version}
+  profile: ${haiercash.pl.profile}
+redis:
+  cluster:
+    address: 10.164.207.233:7000,10.164.207.233:7001,10.164.207.233:7002,10.164.207.233:7003,10.164.207.234:7000,10.164.207.234:7001,10.164.207.234:7002,10.164.207.234:7003,10.164.207.235:7000,10.164.207.235:7001,10.164.207.235:7002,10.164.207.235:7003
+    timeout: 300000
+    maxRedirections: 6
+  pool:
+    maxWaitMillis: -1
+    maxTotal: 1000
+    maxIdle: 9
+    minIdle: 100
+spring:
+  application:
+    name: pl-capital-processer-server-${haiercash.pl.profile}
+  datasource:
+    url: jdbc:oracle:thin:@loan-dbla01.haiercash.com:1521/PLLOAN_SRV
+    testWhileIdle: true
+    validationQuery: SELECT 1 from dual
+    username: plloan
+    password: ENC(2xgo5SPZhB5UIfu9wPoYOw==)
+    driverClassName: oracle.jdbc.OracleDriver
+    platform: oracle
+    type: com.alibaba.druid.pool.DruidDataSource
+    max-active: 5
+    initial-size: 1
+    min-idle: 5
+    max-wait: 60000
+    time-between-eviction-runs-millis: 60000
+    min-evictable-idle-time-millis: 300000
+    validation-query: SELECT 'x' FROM DUAL
+    test-while-idle: true
+    test-on-borrow: false
+    test-on-return: false
+    # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+    filters: stat,wall,log4j
+    # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=3000
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  http:
+    converters:
+      preferred-json-mapper: jackson # json 转换器, 接收数据和请求数据时使用
+      preferred-xml-mapper: jackson # xml 转换器, 请求数据时使用
+    encoding:
+      force: true
+    multipart:
+      max-file-size: 10MB # 最大文件大小
+      max-request-size: 10MB # 最大请求大小
+  session:
+    store-type: none
+  cloud:
+    stream:
+      bindings:
+        plLendingExchange:       #处理中心，放款任务
+          destination: PL_LENDING_EXCHANGE_PRODUCT
+          contentType: application/json
+        plLendingExchangeConsumer:
+          destination: PL_LENDING_EXCHANGE_PRODUCT
+          contentType: application/json
+          group: PROCESSOR
+        plLendingCmisExchange:   #处理中心通知信贷
+          destination: PL_LENDING_EXCHANGE_PRODUCT
+          contentType: application/json
+        plTransResultsExchangeConsumer:  #处理中心-支付回调
+          destination: TRANS_RESULTS_EXCHANGE_INFO
+          contentType: application/json
+          group: PROCESSOR
+      rabbit:
+        bindings:
+          plLendingExchange:    #处理中心，放款任务
+            producer:
+              routing-key-expression: '''PL.LENDING.APLIT'''
+          plLendingExchangeConsumer:
+            consumer:
+              bindingRoutingKey: PL.LENDING.APLIT
+          plLendingCmisExchange:     #处理中心通知信贷
+            producer:
+              routing-key-expression: '''PL.CMIS'''
+          plTransResultsExchangeConsumer:  #处理中心-支付回调
+            consumer:
+               bindingRoutingKey: TRANS_RESULTS_EXCHANGE_INFO
+
+  rabbitmq:           # rabbitmq连接
+    addresses: 10.164.196.209:5672,10.164.196.210:5672,10.164.196.212:5672,10.164.196.214:5672
+    password: admin123
+    username: admin
+    publisher-confirms: true
+eureka:
+  client:
+      healthcheck.enabled: true
+      register-with-eureka: true #是否注册自身到eureka服务器
+      fetch-registry: true #是否从eureka服务器获取注册信息
+      registryFetchIntervalSeconds: 5
+      eurekaServiceUrlPollIntervalSeconds: 120
+      serviceUrl:
+       defaultZone: http://10.164.196.180:1180/eureka/,http://10.164.196.182:1180/eureka/,http://10.164.196.185:1180/eureka/
+        #defaultZone: http://10.164.197.202:1180/eureka/,http://10.164.197.208:1180/eureka/
+  instance:
+    instance-id: ${spring.application.name}@${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}(${spring.cloud.client.hostname})
+    hostname: localhost
+    prefer-ip-address: true
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 2
+    securePortEnabled: false
+ribbon:
+  ConnectTimeout: 30000
+  ReadTimeout: 30000
+  MaxTotalHttpConnections: 5000
+  MaxHttpConnectionsPerHost: 5000
+  ActiveConnectionsLimit: 5000
+  eureka:
+    enabled: true
+management.security.enabled: false
+
+mybatis:
+  dialect: com.haiercash.pluslink.capital.common.mybatis.dialect.OracleDialect
+
+app:
+ appmanage: # appmanage服务配置
+  info:
+   serviceID: APPMANAGE
+   basePath: /app/appmanage
+ portal:
+  info:
+   serviceID: HCPORTAL
+   basePath: /pub/sms
+common:
+  errorPrefix: MESSAGE
+  redisPrefix: _HCMESSAGE_
+  excel:
+    templatePath: classpath:excel\template
+    uploadPath: upload
+  pgwAccount:
+    silver-deposit: pl_icbc_1001
+    other-receivables: pl_icbc_4000
+    the-middle: pl_haier_4001
+    agency-account: loan_core
+    split-switch: true
+### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
+xxl:
+  job:
+    admin:
+      addresses: http://10.164.197.228:8080/xxl-job-admin-1.8.0-SNAPSHOT/
+    executor:
+      appname: hcmessage
+      ip:
+      port: 2280
+      logpath: /export/home/app/applog/${spring.application.name}
+
+api:
+  code:
+    method-not-found: PLCP2001
+    system-error: 99999
+    infos:
+      success:
+        status: S
+        code: 00000
+        message: 处理成功！
+
+controller:
+  enhance:
+    body:
+      all:
+        targetClass: com.haiercash.pluslink.capital.processer.server.api.controller.LoanController
+        targetMethod: applyFor
+        executeBean: allApiEnhance
+
+log:
+  action:
+    open: true
+    table: PL_PROCESSER_API_LOG
+
+fegin:
+  hystrix:
+    enabled: true
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
+
+rest:
+  api:
+    preposition: PL-CAPITAL-PREPOSITION-SERVER-PRODUCT
+    acquirer: http://ACQUIRER
+    esquery: http://ESQUERY
+    receipt: http://PGW-TRADE-SERVER
+    va: http://VA-SERVER
+    crm: http://CRM
+    cmis: CMIS-FRONT-SERVER  #信贷系统
+
+ftp:
+  upload:
+    host: 10.164.204.123
+    userName: pluslinkftp
+    password: admin@tmp
+    port: 21
+    mainPath: /cibn/resources
+
+jasypt:
+  encryptor:
+    password: 123456
+
+processerjob:
+   param:
+    time: 3
+    job_heart_beat: 180
+    info_record_job_heart_beat: 300
+    info_record_job_time: 10

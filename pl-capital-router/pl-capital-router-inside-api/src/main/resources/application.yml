@@ -1,0 +1,52 @@
+haiercash:
+  pl:
+    profile: dev
+    version: 1-0-0
+server:
+  port: 8087
+logging:
+   level:
+     root: INFO
+     org.springframework.security: INFO
+     com.haiercash: DEBUG
+info:
+  name: ${application.name}
+  version: ${application.version}
+  profile: ${application.profile}
+spring:
+  application:
+    name: pl-capital-router-server-${haiercash.pl.profile}-${haiercash.pl.version}
+  datasource:
+    url: jdbc:oracle:thin:@10.164.194.168:1521:haiercash
+    testWhileIdle: true
+    validationQuery: SELECT 1 from dual
+    username: haiercashpay
+    password: haiercashpay
+    driverClassName: oracle.jdbc.OracleDriver
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  http:
+    converters:
+      preferred-json-mapper: jackson # json 转换器, 接收数据和请求数据时使用
+      preferred-xml-mapper: jackson # xml 转换器, 请求数据时使用
+    encoding:
+      force: true # 强制用 UTF-8 编码解析请求
+    multipart:
+      max-file-size: 10MB # 最大文件大小
+      max-request-size: 10MB # 最大请求大小
+  session:
+    store-type: none
+
+management.security.enabled: false
+
+api:
+  code:
+    #错误的服务名称
+    method-not-found: PLCR0001
+    #未知异常
+    system-error: 99999
+    infos:
+      success:
+        status: S
+        code: 00000
+        message: 处理成功！

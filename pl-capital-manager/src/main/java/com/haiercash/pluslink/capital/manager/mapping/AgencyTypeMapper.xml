@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haiercash.pluslink.capital.manager.dao.AgencyTypeDao">
+    <!--查询机构类别list-->
+    <select id="getAgencyTypeList" parameterType="java.lang.String" resultType="com.haiercash.pluslink.capital.manager.data.AgencyType">
+        SELECT DS.SUB_VALUE AS agencyTypeId,
+        DS.SUB_NAME AS agencyTypeName,
+        (SELECT COUNT(1) AS COUNT
+        FROM PL_COOPERATION_AGENCY
+        WHERE DEL_FLAG = 'NORMAL' AND AGENCY_TYPE = DS.SUB_VALUE ) AS agencyNum
+        FROM PL_DICTIONARY_SUB DS
+        WHERE DS.DICTIONARY_ID = #{dictionaryId} AND DS.DEL_FLAG = #{delFlag}
+    </select>
+    <select id="getAgencyTypeDetail" parameterType="java.lang.String" resultType="com.haiercash.pluslink.capital.manager.data.AgencyTypeDetail">
+        SELECT CA.ID AS agencyId,CA.AGENCY_NAME AS agencyName,(
+        SELECT COUNT(1) FROM PL_COOPERATION_PROJECT
+        WHERE AGENCY_ID = CA.ID AND DEL_FLAG = #{arg0}) AS projectNum
+        FROM PL_COOPERATION_AGENCY CA
+        WHERE CA.AGENCY_TYPE = #{arg1}
+    </select>
+
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.haiercash.pluslink.capital.data.DictionarySub">
+        <![CDATA[
+        insert into pl_dictionary_sub(id,dictionary_id,sub_name,sub_value,create_by,create_date,del_flag)
+        values(sys_guid(),#{dictionaryId,jdbcType=VARCHAR},#{subName,jdbcType=VARCHAR},#{subValue,jdbcType=VARCHAR},
+            #{createBy,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP},#{delFlag,jdbcType=VARCHAR})
+        ]]>
+    </insert>
+    <!-- 获取类别ID最大值 -->
+    <select id="getMaxAgencyTypeId" parameterType="java.lang.String" resultType="String">
+        select max(sub_value) as agencyTypeId from pl_dictionary_sub
+        where dictionary_id = #{dictionaryId} and del_flag = #{delFlag}
+    </select>
+    <!-- 查询类别ID是否存在 -->
+    <select id="getAgencyTypeId" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1) as count from pl_dictionary_sub
+        where dictionary_id = #{dictionaryId} and sub_value = #{agencyTypeId} and del_flag = #{delFlag}
+    </select>
+    <!-- 根据类别ID更新 -->
+    <update id="update" parameterType="com.haiercash.pluslink.capital.manager.data.AgencyType">
+        update pl_dictionary_sub set
+        <if test="agencyTypeName != null and agencyTypeName != ''">
+            sub_name = #{agencyTypeName},
+        </if>
+        del_flag = #{delFlag}
+        where dictionary_id = #{dictionaryId} and sub_value = #{agencyTypeId}
+    </update>
+</mapper>

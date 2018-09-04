@@ -1,0 +1,27 @@
+group = 'com.haiercash.pluslink.capital'
+version '1.0.4'
+
+apply plugin: 'org.springframework.boot'
+apply plugin: "io.spring.dependency-management"
+
+springBoot {
+    classifier = 'exec'
+}
+
+jar {
+    baseName = project.name
+    version = project.version
+    if (!project.releasePublish) {
+        version = version + "-SNAPSHOT"
+    }
+    println "profile: ${profile}"
+}
+
+dependencies {
+    compile project(":pl-capital-base")
+    compile project(":pl-capital-common")
+    compile group: 'cn.jbinfo.parent.api', name: 'cloud-api-base-model', version: "${jbinfoCloudParentVersion}"
+    compile group: 'cn.jbinfo.parent.api', name: 'cloud-microservices-scala', version: "${jbinfoCloudParentVersion}"
+}
+apply from: '../../installation_package.gradle'
+

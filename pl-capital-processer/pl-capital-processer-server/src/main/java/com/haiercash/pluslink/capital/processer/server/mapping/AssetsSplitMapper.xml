@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haiercash.pluslink.capital.processer.server.dao.AssetsSplitDao">
+    <sql id="attMainColumns">
+		ID, APPL_SEQ, CUST_NAME,
+        LOAN_NO1, LOAN_NO2, CERT_CODE,
+        MOBILE, TRADE_AMOUNT, CURRENCY,
+        CONTRACT_NO, ORIG_PRCP, SUB_BUSINESS_TYPE,
+        PAYEE_CARD_NO, PAYEE_NAME, CRM_TYPE,
+        CRM_NO, CERT_TYPE, CERT_NO,
+        BANK_CODE, BANK_CARD_TYPE, BANK_UNION_CODE,
+        CHANNEL_NATURE, INTER_ID, OPENING_BANK_PROVINCE,
+        OPENING_BANK_CITY, BALANCE_PAY_TAG, TOTAL_AMOUNT,
+        IS_HAS_MIDD_ACCT, IN_ACTNO, IN_ACTNAME,
+        IN_ACTNO2, IN_ACTNAME2, IND_COMMP_CODE,
+        PAY_CODE, JKR_NAME, ACT_CHANNEL,
+        CREATE_DATE, UPDATE_DATE, CREATE_BY,
+        UPDATE_BY, DEL_FLAG, MEMO,
+        PROJECT_TYPE,PROD_BUY_OUT,LOAN_STATUS,
+        CHANNEL_NO,REQUEST_IP,CRM_NUM
+	</sql>
+
+    <resultMap id="assetsSplit" type="com.haiercash.pluslink.capital.data.AssetsSplit"/>
+    <select id="selectById" resultType="com.haiercash.pluslink.capital.data.AssetsSplit">
+        select
+        <include refid="attMainColumns"/>
+        from PL_ASSETS_SPLIT where id=#{id} AND DEL_FLAG=#{delFlag}
+    </select>
+    <select id="isExistApplSeq" resultType="java.lang.String" parameterType="java.lang.String">
+        select APPL_SEQ
+        from PL_ASSETS_SPLIT
+        where APPL_SEQ = #{applSeq} and DEL_FLAG=#{delFlag}
+    </select>
+    <select id="searchAssetsSplitByApplSeqOrContractNo" resultType="com.haiercash.pluslink.capital.data.AssetsSplit">
+        select
+        <include refid="attMainColumns"/>
+        from PL_ASSETS_SPLIT
+        where DEL_FLAG=#{delFlag}
+        <if test="applSeq != null and applSeq != ''">
+            and APPL_SEQ = #{applSeq}
+        </if>
+        <if test="contractNo != null and contractNo != ''">
+            and CONTRACT_NO = #{contractNo}
+        </if>
+
+    </select>
+    <select id="getSequence" resultType="java.lang.String">
+        SELECT
+        LPAD(SUBSTR(PL_ASSETS_SPLIT_SEQUENCE.NEXTVAL,greatest( -8,-length(PL_ASSETS_SPLIT_SEQUENCE.NEXTVAL)),8),8,'0')
+        FROM
+        dual
+    </select>
+    <insert id="insertAssetsSplit" parameterType="com.haiercash.pluslink.capital.data.AssetsSplit">
+        insert into PL_ASSETS_SPLIT
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="applSeq != null">
+                APPL_SEQ,
+            </if>
+            <if test="custName != null">
+                CUST_NAME,
+            </if>
+            <if test="loanNo1 != null">
+                LOAN_NO1,
+            </if>
+            <if test="loanNo2 != null">
+                LOAN_NO2,
+            </if>
+            <if test="certCode != null">
+                CERT_CODE,
+            </if>
+            <if test="mobile != null">
+                MOBILE,
+            </if>
+            <if test="tradeAmount != null">
+                TRADE_AMOUNT,
+            </if>
+            <if test="currency != null">
+                CURRENCY,
+            </if>
+            <if test="contractNo != null">
+                CONTRACT_NO,
+            </if>
+            <if test="origPrcp != null">
+                ORIG_PRCP,
+            </if>
+            <if test="subBusinessType != null">
+                SUB_BUSINESS_TYPE,
+            </if>
+            <if test="payeeCardNo != null">
+                PAYEE_CARD_NO,
+            </if>
+            <if test="payeeName != null">
+                PAYEE_NAME,
+            </if>
+            <if test="crmType != null">
+                CRM_TYPE,
+            </if>
+            <if test="crmNo != null">
+                CRM_NO,
+            </if>
+            <if test="certType != null">
+                CERT_TYPE,
+            </if>
+            <if test="certNo != null">
+                CERT_NO,
+            </if>
+            <if test="bankCode != null">
+                BANK_CODE,
+            </if>
+            <if test="bankCardType != null">
+                BANK_CARD_TYPE,
+            </if>
+            <if test="bankUnionCode != null">
+                BANK_UNION_CODE,
+            </if>
+            <if test="channelNature != null">
+                CHANNEL_NATURE,
+            </if>
+            <if test="interId != null">
+                INTER_ID,
+            </if>
+            <if test="openingBankProvince != null">
+                OPENING_BANK_PROVINCE,
+            </if>
+            <if test="openingBankCity != null">
+                OPENING_BANK_CITY,
+            </if>
+            <if test="balancePayTag != null">
+                BALANCE_PAY_TAG,
+            </if>
+            <if test="totalAmount != null">
+                TOTAL_AMOUNT,
+            </if>
+            <if test="isHasMiddAcct != null">
+                IS_HAS_MIDD_ACCT,
+            </if>
+            <if test="inActno != null">
+                IN_ACTNO,
+            </if>
+            <if test="inActname != null">
+                IN_ACTNAME,
+            </if>
+            <if test="inActno2 != null">
+                IN_ACTNO2,
+            </if>
+            <if test="inActname2 != null">
+                IN_ACTNAME2,
+            </if>
+            <if test="indCommpCode != null">
+                IND_COMMP_CODE,
+            </if>
+            <if test="payCode != null">
+                PAY_CODE,
+            </if>
+            <if test="jkrName != null">
+                JKR_NAME,
+            </if>
+            <if test="actChannel != null">
+                ACT_CHANNEL,
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE,
+            </if>
+            <if test="updateDate != null">
+                UPDATE_DATE,
+            </if>
+            <if test="createBy != null">
+                CREATE_BY,
+            </if>
+            <if test="updateBy != null">
+                UPDATE_BY,
+            </if>
+            <if test="delFlag != null">
+                DEL_FLAG,
+            </if>
+            <if test="projectType != null">
+                PROJECT_TYPE,
+            </if>
+            <if test="prodBuyOut != null">
+                PROD_BUY_OUT,
+            </if>
+            <if test="loanStatus != null">
+                LOAN_STATUS,
+            </if>
+            <if test="channelNo != null">
+                CHANNEL_NO,
+            </if>
+            <if test="requestIp != null">
+                REQUEST_IP,
+            </if>
+            <if test="crmNum != null">
+                CRM_NUM,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="applSeq != null">
+                #{applSeq,jdbcType=VARCHAR},
+            </if>
+            <if test="custName != null">
+                #{custName,jdbcType=VARCHAR},
+            </if>
+            <if test="loanNo1 != null">
+                #{loanNo1,jdbcType=VARCHAR},
+            </if>
+            <if test="loanNo2 != null">
+                #{loanNo2,jdbcType=VARCHAR},
+            </if>
+            <if test="certCode != null">
+                #{certCode,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                #{mobile,jdbcType=DECIMAL},
+            </if>
+            <if test="tradeAmount != null">
+                #{tradeAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="currency != null">
+                #{currency,jdbcType=VARCHAR},
+            </if>
+            <if test="contractNo != null">
+                #{contractNo,jdbcType=VARCHAR},
+            </if>
+            <if test="origPrcp != null">
+                #{origPrcp,jdbcType=DECIMAL},
+            </if>
+            <if test="subBusinessType != null">
+                #{subBusinessType,jdbcType=VARCHAR},
+            </if>
+            <if test="payeeCardNo != null">
+                #{payeeCardNo,jdbcType=VARCHAR},
+            </if>
+            <if test="payeeName != null">
+                #{payeeName,jdbcType=VARCHAR},
+            </if>
+            <if test="crmType != null">
+                #{crmType,jdbcType=VARCHAR},
+            </if>
+            <if test="crmNo != null">
+                #{crmNo,jdbcType=VARCHAR},
+            </if>
+            <if test="certType != null">
+                #{certType,jdbcType=VARCHAR},
+            </if>
+            <if test="certNo != null">
+                #{certNo,jdbcType=VARCHAR},
+            </if>
+            <if test="bankCode != null">
+                #{bankCode,jdbcType=VARCHAR},
+            </if>
+            <if test="bankCardType != null">
+                #{bankCardType,jdbcType=VARCHAR},
+            </if>
+            <if test="bankUnionCode != null">
+                #{bankUnionCode,jdbcType=VARCHAR},
+            </if>
+            <if test="channelNature != null">
+                #{channelNature,jdbcType=VARCHAR},
+            </if>
+            <if test="interId != null">
+                #{interId,jdbcType=VARCHAR},
+            </if>
+            <if test="openingBankProvince != null">
+                #{openingBankProvince,jdbcType=VARCHAR},
+            </if>
+            <if test="openingBankCity != null">
+                #{openingBankCity,jdbcType=VARCHAR},
+            </if>
+            <if test="balancePayTag != null">
+                #{balancePayTag,jdbcType=VARCHAR},
+            </if>
+            <if test="totalAmount != null">
+                #{totalAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="isHasMiddAcct != null">
+                #{isHasMiddAcct,jdbcType=VARCHAR},
+            </if>
+            <if test="inActno != null">
+                #{inActno,jdbcType=VARCHAR},
+            </if>
+            <if test="inActname != null">
+                #{inActname,jdbcType=VARCHAR},
+            </if>
+            <if test="inActno2 != null">
+                #{inActno2,jdbcType=VARCHAR},
+            </if>
+            <if test="inActname2 != null">
+                #{inActname2,jdbcType=VARCHAR},
+            </if>
+            <if test="indCommpCode != null">
+                #{indCommpCode,jdbcType=VARCHAR},
+            </if>
+            <if test="payCode != null">
+                #{payCode,jdbcType=VARCHAR},
+            </if>
+            <if test="jkrName != null">
+                #{jkrName,jdbcType=VARCHAR},
+            </if>
+            <if test="actChannel != null">
+                #{actChannel,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                #{createDate},
+            </if>
+            <if test="updateDate != null">
+                #{updateDate},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="delFlag != null">
+                #{delFlag,jdbcType=VARCHAR},
+            </if>
+            <if test="projectType != null">
+                #{projectType,jdbcType=VARCHAR},
+            </if>
+            <if test="prodBuyOut != null">
+                #{prodBuyOut,jdbcType=VARCHAR},
+            </if>
+            <if test="loanStatus != null">
+                #{loanStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="channelNo != null">
+                #{channelNo,jdbcType=VARCHAR},
+            </if>
+            <if test="requestIp != null">
+                #{requestIp,jdbcType=VARCHAR},
+            </if>
+            <if test="crmNum != null">
+                #{crmNum,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateProjectTypeById">
+        UPDATE PL_ASSETS_SPLIT
+        <set>
+            PROD_BUY_OUT=#{model.prodBuyOut},
+            PROJECT_TYPE = #{model.projectType},
+            UPDATE_DATE = #{model.updateDate}
+        </set>
+        where
+        ID = #{model.id} AND DEL_FLAG=#{delFlag}
+    </update>
+    <!-- 根据合同号查询放款状态 -->
+    <select id="getLoanStatus" resultType="java.lang.String">
+        SELECT LOAN_STATUS FROM PL_ASSETS_SPLIT
+        <where>
+            CONTRACT_NO=#{contractNo,jdbcType=VARCHAR} and DEL_FLAG=#{delFlag}
+        </where>
+    </select>
+    <!-- 根据合同号查询 -->
+    <select id="selectBycontractNo" parameterType="java.lang.String"
+            resultType="com.haiercash.pluslink.capital.data.AssetsSplit">
+        SELECT
+        <include refid="attMainColumns"/>
+        FROM PL_ASSETS_SPLIT
+        WHERE
+        CONTRACT_NO=#{contractNo,jdbcType=VARCHAR} and DEL_FLAG=#{delFlag}
+    </select>
+
+    <!-- -->
+    <update id="updateLoanStatus">
+        UPDATE PL_ASSETS_SPLIT SET LOAN_STATUS = #{loanStatus} WHERE CONTRACT_NO = #{contractNo} AND DEL_FLAG=#{delFlag}
+    </update>
+    <!--   <update id="updateLoanStatusById" parameterType="java.lang.String">
+           UPDATE PL_ASSETS_SPLIT SET LOAN_STATUS = #{1} and project_type=#{2} and prod_buy_out=#{3} WHERE ID = #{0}
+       </update>-->
+    <update id="updateLoanStatusAndProjectTypeAndProdBuyOutById">
+        UPDATE PL_ASSETS_SPLIT SET loan_status=#{loanStatus},project_type=#{projectType},prod_buy_out=#{prodBuyOut}
+         WHERE ID = #{id} AND DEL_FLAG=#{delFlag}
+    </update>
+
+    <update id="updateProjectTypeAndProdBuyOutById">
+        UPDATE PL_ASSETS_SPLIT SET project_type=#{projectType},prod_buy_out=#{prodBuyOut}
+         WHERE ID = #{id} AND DEL_FLAG=#{delFlag}
+    </update>
+
+
+    <update id="updateLoanStatusProjectTypeByID">
+        UPDATE PL_ASSETS_SPLIT
+        <set>
+            PROD_BUY_OUT=#{model.prodBuyOut},
+            PROJECT_TYPE = #{model.projectType},
+            LOAN_STATUS = #{model.loanStatus},
+            UPDATE_DATE = #{model.updateDate}
+        </set>
+        where
+        ID = #{model.id} AND DEL_FLAG=#{delFlag}
+    </update>
+    <update id="updateLoanStatusById">
+        <if test="id != null and id != ''">
+            UPDATE PL_ASSETS_SPLIT
+            <set>
+                LOAN_STATUS = #{loanStatus},
+                PROJECT_TYPE = #{projectType},
+                PROD_BUY_OUT=#{prodBuyOut}
+            </set>
+            where
+            ID = #{id} and DEL_FLAG=#{delFlag}
+        </if>
+    </update>
+    <update id="updateOnlyLoanStatusById">
+        <if test="id != null and id != ''">
+            UPDATE PL_ASSETS_SPLIT
+            <set>
+                LOAN_STATUS = #{loanStatus}
+            </set>
+            where
+            ID = #{id} and DEL_FLAG=#{delFlag}
+        </if>
+    </update>
+    <update id="updateLoanStatusByIdAndDelFlag">
+        <if test="id != null and id != ''">
+            UPDATE PL_ASSETS_SPLIT
+            <set>
+                LOAN_STATUS = #{loanStatus}
+            </set>
+            where
+            ID = #{id} and DEL_FLAG=#{delFlag}
+        </if>
+    </update>
+
+    <update id="updateLoanStatusAndLoanMemnoById">
+        <if test="id != null and id != ''">
+            UPDATE PL_ASSETS_SPLIT
+            <set>
+                LOAN_STATUS = #{loanStatus},
+                LOAN_MEMNO = #{loanMemno}
+            </set>
+            where
+            ID = #{id} and DEL_FLAG=#{delFlag}
+        </if>
+    </update>
+
+</mapper>

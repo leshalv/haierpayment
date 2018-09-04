@@ -1,0 +1,48 @@
+group = 'com.haiercash.pluslink.capital'
+version '1.0.5'
+
+apply plugin: 'org.springframework.boot'
+apply plugin: "io.spring.dependency-management"
+
+springBoot {
+    classifier = 'exec'
+}
+
+jar {
+    from('../static') {
+        into 'static'
+        exclude 'doc.html'
+        exclude 'doc'
+    }
+}
+
+jar {
+    baseName = project.name
+    version = project.version
+    if (!project.releasePublish) {
+        version = version + "-SNAPSHOT"
+    }
+    println "profile: ${profile}"
+}
+
+dependencies {
+    compile project(":pl-capital-base")
+    compile project(":pl-capital-common")
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-cache', version:"${springBootVersion}"
+    /*compile project(':pl-capital-manager-model')
+    compile project(':pl-capital-manager-security')*/
+    compile(group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:"${springBootVersion}") {
+        exclude(module: 'spring-boot-starter-tomcat')
+    }
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-undertow', version:"${springBootVersion}"
+    compile(group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version:"${springBootVersion}") {
+        exclude(module: 'HikariCP')
+    }
+    // jedis
+    compile("redis.clients:jedis:2.9.0")
+    compile group: 'mysql', name: 'mysql-connector-java', version:'6.0.6'
+    compile group: 'com.alibaba', name: 'druid', version:'1.1.2'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+apply from: '../installation_package.gradle'
+

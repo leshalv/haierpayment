@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haiercash.pluslink.capital.processer.server.dao.AssetsSplitItemDao">
+    <sql id="splitItemColumns">
+		ID,
+        ASSETS_SPLIT_ID,
+        TRANS_AMT,
+        STATUS,
+        LOAN_NO,
+        AGENCY_RATE,
+        AGENCY_ID,
+        PROJECT_ID,
+        CAP_LOAN_NO,
+        CREATE_DATE,
+        UPDATE_DATE,
+        CREATE_BY,
+        UPDATE_BY,
+        DEL_FLAG,
+        MEMO,
+        LOAN_TYPE,
+        APPL_AMT
+	</sql>
+
+    <select id="selectById" resultType="com.haiercash.pluslink.capital.data.AssetsSplitItem">
+        select
+        <include refid="splitItemColumns"/>
+        from PL_ASSETS_SPLIT_ITEM where id=#{id} AND DEL_FLAG=#{delFlag}
+    </select>
+
+    <insert id="insertAssetsSplitItemList" parameterType="com.haiercash.pluslink.capital.data.AssetsSplitItem">
+        INSERT INTO PL_ASSETS_SPLIT_ITEM(
+        ID,
+        ASSETS_SPLIT_ID,
+        TRANS_AMT,
+        STATUS,
+        LOAN_NO,
+        AGENCY_RATE,
+        AGENCY_ID,
+        PROJECT_ID,
+        CAP_LOAN_NO,
+        CREATE_DATE,
+        UPDATE_DATE,
+        CREATE_BY,
+        UPDATE_BY,
+        DEL_FLAG,
+        MEMO,
+        LOAN_TYPE,
+        APPL_AMT
+        )
+        <foreach collection="list" item="req" index="index" separator="UNION">
+            select
+            #{req.id,jdbcType=VARCHAR},
+            #{req.assetsSplitId,jdbcType=VARCHAR},
+            #{req.transAmt,jdbcType=DECIMAL},
+            #{req.status,jdbcType=VARCHAR},
+            #{req.loanNo,jdbcType=VARCHAR},
+            #{req.agencyRate,jdbcType=DECIMAL},
+            #{req.agencyId,jdbcType=VARCHAR},
+            #{req.projectId,jdbcType=VARCHAR},
+            #{req.capLoanNo,jdbcType=VARCHAR},
+            #{req.createDate,jdbcType=DATE},
+            #{req.updateDate,jdbcType=DATE},
+            #{req.createBy,jdbcType=VARCHAR},
+            #{req.updateBy,jdbcType=VARCHAR},
+            #{req.delFlag,jdbcType=VARCHAR},
+            #{req.memo,jdbcType=VARCHAR},
+            #{req.loanType,jdbcType=VARCHAR},
+            #{req.applAmt,jdbcType=DECIMAL}
+            from dual
+        </foreach>
+    </insert>
+
+    <update id="updateBackData">
+        UPDATE PL_ASSETS_SPLIT_ITEM SET TRANS_AMT=#{model.transAmt},STATUS=#{model.status},AGENCY_RATE=#{model.agencyRate},
+        UPDATE_DATE=#{model.updateDate},APPL_AMT=#{model.applAmt},MEMO=#{model.memo} WHERE ID=#{model.id}
+    </update>
+
+
+    <update id="updateStatusById">
+        UPDATE PL_ASSETS_SPLIT_ITEM SET STATUS = #{status} , memo =#{memo}  WHERE ID = #{id} AND DEL_FLAG=#{delFlag}
+    </update>
+
+    <update id="updateStatusAndCapLoanNoById">
+        UPDATE PL_ASSETS_SPLIT_ITEM SET STATUS = #{status} ,CAP_LOAN_NO=#{capLoanNo}, memo =#{memo}  WHERE ID = #{id} AND DEL_FLAG=#{delFlag}
+    </update>
+
+    <update id="updateStatusAndDelFlagById">
+        UPDATE PL_ASSETS_SPLIT_ITEM SET STATUS = #{status}, memo =#{memo}  WHERE ID = #{id} AND DEL_FLAG=#{delFlag}
+    </update>
+
+
+    <select id="selectByAssetsSpiltId" resultType="com.haiercash.pluslink.capital.data.AssetsSplitItem">
+        select
+        <include refid="splitItemColumns"/>
+        from PL_ASSETS_SPLIT_ITEM where ASSETS_SPLIT_ID=#{assetsSpiltId} AND DEL_FLAG=#{delFlag}
+    </select>
+    <select id="selectByAssetsSpiltIdForCredit" resultType="com.haiercash.pluslink.capital.data.AssetsSplitItem">
+        select
+        <include refid="splitItemColumns"/>
+        from PL_ASSETS_SPLIT_ITEM where ASSETS_SPLIT_ID=#{assetsSpiltId} AND DEL_FLAG=#{delFlag} AND STATUS=#{status}
+    </select>
+
+    <select id="selectByAssetsSpiltIdAndLoan" resultType="com.haiercash.pluslink.capital.data.AssetsSplitItem">
+        select
+        <include refid="splitItemColumns"/>
+        from PL_ASSETS_SPLIT_ITEM where ASSETS_SPLIT_ID=#{assetsSpiltId} AND LOAN_NO =#{loanNo} AND DEL_FLAG=#{delFlag}
+    </select>
+
+    <select id="getSequence" resultType="java.lang.String">
+        SELECT
+        LPAD(SUBSTR(PL_ASSETS_SPLIT_ITEM_SEQUENCE.NEXTVAL,greatest( -8,-length(PL_ASSETS_SPLIT_ITEM_SEQUENCE.NEXTVAL)),8),8,'0')
+        FROM dual
+    </select>
+    <select id="getStatusByContractNo"
+            resultType="java.lang.String">
+        SELECT PASI.STATUS FROM PL_ASSETS_SPLIT_ITEM PASI
+        LEFT JOIN (
+            SELECT ID,LOAN_NO2 FROM PL_ASSETS_SPLIT
+            WHERE CONTRACT_NO = #{contractNo,jdbcType=VARCHAR} AND DEL_FLAG=#{delFlag} ) PAS
+        ON PASI.ASSETS_SPLIT_ID = PAS.ID AND PASI.LOAN_NO = PAS.LOAN_NO2
+        WHERE AND DEL_FLAG=#{delFlag}
+    </select>
+    <select id="selectByAssetsSpiltIdAndLoanType" parameterType="java.lang.String"
+            resultType="com.haiercash.pluslink.capital.data.AssetsSplitItem">
+        select * from pl_assets_split_item
+        where assets_split_id=#{assetsSpiltId} and loan_type=#{loanType} and del_flag=#{delFlag}
+    </select>
+</mapper>

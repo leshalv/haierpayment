@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haiercash.pluslink.capital.processer.server.dao.QuotaDao">
+
+    <!--根据合作机构编号、身份证号查询额度编号 1:额度返回；2：授信申请中；0：作废-->
+    <select id="selectByAgencyIdAndCertCode" resultType="com.haiercash.pluslink.capital.data.Quota">
+        select
+        ID,ASSETS_SPLIT_ITEM_ID,CINO_MEMNO,APPL_DATE,COOPR_AGENCY_ID,COOPR_AGENCY_NAME,CERT_CODE,COOPR_USER_ID,STATUS,ORG_CORP_MSG_ID
+        from
+        PL_QUOTA
+        <where>
+            COOPR_AGENCY_ID = #{cooprAgencyId}
+            AND DEL_FLAG=#{delFlag}
+            and CERT_CODE = #{certCode}
+            <![CDATA[
+                and ROWNUM <= 1
+              ]]>
+            order by create_date desc
+        </where>
+    </select>
+    <select id="selectByCorpMsgId" resultType="com.haiercash.pluslink.capital.data.Quota">
+        select
+        ID,ASSETS_SPLIT_ITEM_ID,CINO_MEMNO,APPL_DATE,COOPR_AGENCY_ID,COOPR_AGENCY_NAME,CERT_CODE,COOPR_USER_ID,STATUS,ORG_CORP_MSG_ID
+        from
+        PL_QUOTA
+        <where>
+            ORG_CORP_MSG_ID = #{corpMsgId} AND DEL_FLAG=#{delFlag}
+        </where>
+    </select>
+    <!--根据原消息ID查询授信状态-->
+    <select id="getCreditStatus" resultType="String">
+        SELECT ASI.STATUS FROM PL_ASSETS_SPLIT_ITEM ASI
+        LEFT JOIN PL_QUOTA QUO
+        ON ASI.ID = QUO.ASSETS_SPLIT_ITEM_ID
+        WHERE QUO.ORG_CORP_MSG_ID = #{orgCorpMsgId,jdbcType=VARCHAR} AND ASI.DEL_FLAG =#{delFlag} AND QUO.DEL_FLAG =#{delFlag}
+    </select>
+    <update id="updateByCallBackDataWithAssetsSplitItemId">
+        UPDATE PL_QUOTA SET CINO_MEMNO=#{cinoMemno},COOPR_USER_ID=#{cooprUserId},STATUS=#{status},
+        ASSETS_SPLIT_ITEM_ID=#{assetsSplitItemId},
+        UPDATE_DATE=#{updateDate} WHERE ID=#{id} AND DEL_FLAG=#{delFlag}
+    </update>
+    <update id="updateByCallBackData">
+        UPDATE PL_QUOTA SET CINO_MEMNO=#{cinoMemno},COOPR_USER_ID=#{cooprUserId},STATUS=#{status},
+        UPDATE_DATE=#{updateDate} WHERE ID=#{id} AND DEL_FLAG=#{delFlag}
+    </update>
+</mapper>

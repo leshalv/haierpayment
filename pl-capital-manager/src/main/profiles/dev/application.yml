@@ -1,0 +1,109 @@
+haiercash:
+  pl:
+    profile: dev
+    version: 1-0-0
+server:
+  port: 9091
+logging:
+   level:
+     root: INFO
+     org.springframework.security: INFO
+     com.haiercash: DEBUG
+security:
+  sessions: NEVER
+  user:
+    name: actuator
+    password: admin@act
+info:
+  name: ${application.name}
+  version: ${application.version}
+  profile: ${application.profile}
+redis:
+  cluster:
+    address: 10.164.197.209:7000,10.164.197.208:7000,10.164.197.202:7000,10.164.197.209:7001,10.164.197.208:7001,10.164.197.202:7001
+    timeout: 300000
+    maxRedirections: 6
+  pool:
+    maxWaitMillis: -1
+    maxTotal: 1000
+    maxIdle: 9
+    minIdle: 100
+spring:
+  application:
+    name: pl-capital-manager-${haiercash.pl.profile}-${haiercash.pl.version}
+  datasource:
+    url: jdbc:oracle:thin:@10.164.204.106:1521/plloandb
+    username: plloan
+    password: plloan
+    driverClassName: oracle.jdbc.OracleDriver
+    testWhileIdle: true
+    validationQuery: SELECT 1 from dual
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  http:
+    converters:
+      preferred-json-mapper: jackson # json 转换器, 接收数据和请求数据时使用
+      preferred-xml-mapper: jackson # xml 转换器, 请求数据时使用
+    encoding:
+      force: true # 强制用 UTF-8 编码解析请求
+    multipart:
+      max-file-size: 10MB # 最大文件大小
+      max-request-size: 10MB # 最大请求大小
+  session:
+    store-type: redis
+  redis:
+    host: 10.164.197.210
+    port: 6379
+
+eureka:
+  client:
+      register-with-eureka: false #是否注册自身到eureka服务器
+      fetch-registry: false #是否从eureka服务器获取注册信息
+      registryFetchIntervalSeconds: 5
+      eurekaServiceUrlPollIntervalSeconds: 120
+      serviceUrl:
+#        defaultZone: http://10.164.197.209:1180/eureka/,http://10.164.197.208:1180/eureka/
+        defaultZone: http://10.164.197.202:1180/eureka/
+  instance:
+    instance-id: ${spring.application.name}@${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}(${spring.cloud.client.hostname})
+    hostname: localhost
+    prefer-ip-address: true
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 2
+    securePortEnabled: false
+ribbon:
+  ConnectTimeout: 300000
+  ReadTimeout: 600000
+  MaxTotalHttpConnections: 5000
+  MaxHttpConnectionsPerHost: 5000
+  ActiveConnectionsLimit: 5000
+  eureka:
+    enabled: true
+management.security.enabled: false
+
+mybatis:
+  dialect: com.haiercash.pluslink.capital.common.mybatis.dialect.OracleDialect
+
+app:
+  workflow:
+    info:
+      workflowRest: http://10.166.100.226:8082/rest/engine/default
+      ribbonEnable: false
+  portal:
+    info:
+      serviceID: http://10.166.100.226:8000
+      queryPortalUser: /pub/portal/mUser/auditsUsers
+      ribbonEnable: false
+  message:
+    info:
+      serviceID: HCMessage-server-${haiercash.HCMessage.profile}-${haiercash.HCMessage.version}
+      basePath: /api/hcmsg
+
+common:
+  errorPrefix: MESSAGE
+  redisPrefix: _HCMESSAGE_
+  excel:
+    templatePath: classpath:excel\template
+    uploadPath: upload
+  bizId: HCMESSAGE001
+  institution: HCMSSAGE

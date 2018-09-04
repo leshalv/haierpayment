@@ -1,0 +1,15 @@
+group = 'com.haiercash.pluslink.capital'
+version = '1.0.0'
+
+jar {
+    baseName = project.name
+    version = project.version
+    if (!project.releasePublish) {
+        version = version + "-SNAPSHOT"
+    }
+}
+
+dependencies {
+    compile group: 'cn.jbinfo.parent', name: 'cloud-core-model', version: "${jbinfoCloudParentVersion}"
+}
+apply from: '../maven_push.gradle'

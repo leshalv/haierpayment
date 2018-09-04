@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns="http://www.example.org/description-config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/description-config ../../../description.xsd">
+	<module>
+		<module-name>资金平台处理中心</module-name>
+		<baseline>V1.0.0.R.20180703</baseline>
+		<is-custom>否</is-custom>
+		<serial-num>1</serial-num>
+	</module>
+</description>

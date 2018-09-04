@@ -1,0 +1,18 @@
+group = 'com.haiercash.pluslink.capital'
+version = '1.0.0'
+
+jar {
+    baseName = project.name
+    version = project.version
+    if (!project.releasePublish) {
+        version = version + "-SNAPSHOT"
+    }
+}
+
+dependencies {
+    compile project(":pl-capital-base")
+    compile project(":pl-capital-common")
+    compile group: 'cn.jbinfo.parent.api', name: 'integration-swagger', version: "${jbinfoCloudParentVersion}"
+    compile group: 'cn.jbinfo.parent.api', name: 'cloud-api-base-model', version: "${jbinfoCloudParentVersion}"
+}
+apply from: '../../maven_push.gradle'

@@ -1,0 +1,624 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiercash.pluslink.capital.common.mybatis.dao.AbstractDao">
+    <sql id="query">
+        <if test="initParamList != null">
+            <foreach collection="initParamList" item="column" separator="and" open="and">
+                <choose>
+                    <when test="column.ors != null">
+                        <foreach collection="column.ors" item="columnOr" separator="or" open="(" close=")">
+                            <choose>
+                                <when test="columnOr.operate == null">
+                                    <![CDATA[
+                                        ${columnOr.name} = ${columnOr.value}
+                                    ]]>
+                                </when>
+                                <when test="columnOr.operate == 'is'">
+                                    <![CDATA[
+                                        ${columnOr.name} is null
+                                    ]]>
+                                </when>
+                                <when test="columnOr.operate == 'is not'">
+                                    <![CDATA[
+                                        ${columnOr.name} is not null
+                                    ]]>
+                                </when>
+                                <otherwise>
+                                    <choose>
+                                        <when test="columnOr.type == 'Number'">
+                                            <if test="column.operate == 'in'">
+                                                <![CDATA[
+                                                    ${columnOr.name} ${columnOr.operate} ${columnOr.value}
+                                                ]]>
+                                            </if>
+                                            <if test="column.operate != 'in'">
+                                                <![CDATA[
+                                                    ${columnOr.name} ${columnOr.operate} #{columnOr.value, jdbcType=NUMERIC}
+                                                ]]>
+                                            </if>
+                                        </when>
+                                        <when test="columnOr.type == 'Date'">
+                                            <choose>
+                                                <when test="columnOr.operate == '='.toString() or columnOr.operate == 'like'">
+                                                    <![CDATA[
+                                                        $[@date_to_char(${columnOr.name} | ${columnOr.format})] ${columnOr.operate} #{columnOr.value, jdbcType=VARCHAR}
+                                                    ]]>
+                                                </when>
+                                                <otherwise>
+                                                    <![CDATA[
+                                                        ${columnOr.name} ${columnOr.operate} $[@char_to_date(#{columnOr.value, jdbcType=VARCHAR} | ${columnOr.format})]
+                                                    ]]>
+                                                </otherwise>
+                                            </choose>
+                                        </when>
+                                        <otherwise>
+                                            <![CDATA[
+                                                ${columnOr.name} ${columnOr.operate} #{columnOr.value, jdbcType=VARCHAR}
+                                            ]]>
+                                        </otherwise>
+                                    </choose>
+                                </otherwise>
+                            </choose>
+                        </foreach>
+                    </when>
+                    <when test="column.operate == null">
+                        <![CDATA[
+                            ${column.name} = ${column.value}
+                        ]]>
+                    </when>
+                    <when test="column.operate == 'is'">
+                        <![CDATA[
+                            ${column.name} is null
+                        ]]>
+                    </when>
+                    <when test="column.operate == 'is not'">
+                        <![CDATA[
+                            ${column.name} is not null
+                        ]]>
+                    </when>
+                    <otherwise>
+                        <choose>
+                            <when test="column.type == 'Number'">
+                                <if test="column.operate == 'in'">
+                                    <![CDATA[
+                                        ${column.name} ${column.operate} ${column.value}
+                                    ]]>
+                                </if>
+                                <if test="column.operate != 'in'">
+                                    <![CDATA[
+                                        ${column.name} ${column.operate} #{column.value, jdbcType=NUMERIC}
+                                    ]]>
+                                </if>
+                            </when>
+                            <when test="column.type == 'Date'">
+                                <choose>
+                                    <when test="column.operate == '='.toString() or column.operate == 'like'">
+                                        <![CDATA[
+                                            $[@date_to_char(${column.name} | ${column.format})] ${column.operate} #{column.value, jdbcType=VARCHAR}
+                                        ]]>
+                                    </when>
+                                    <otherwise>
+                                        <![CDATA[
+                                            ${column.name} ${column.operate} $[@char_to_date(#{column.value, jdbcType=VARCHAR} | ${column.format})]
+                                        ]]>
+                                    </otherwise>
+                                </choose>
+                            </when>
+                            <otherwise>
+                                <![CDATA[
+                                    ${column.name} ${column.operate} #{column.value, jdbcType=VARCHAR}
+                                ]]>
+                            </otherwise>
+                        </choose>
+                    </otherwise>
+                </choose>
+            </foreach>
+        </if>
+        <if test="filter != null">
+            <choose>
+                <when test="filter.operate == 'default'">
+                    <foreach collection="filter.columnList" item="column" separator="or" open="and (" close=")">
+                        <choose>
+                            <when test="column.type == 'Date'">
+                                <if test="forceFilter != null and (forceFilter == 'all' or forceFilter == 'date')">
+                                    <![CDATA[
+                                        $[@date_to_char(${column.name} | ${column.format})] like #{filter.value, jdbcType=VARCHAR}
+                                    ]]>
+                                </if>
+                            </when>
+                            <otherwise>
+                                <choose>
+                                    <when test="filter.type == null">
+                                        <![CDATA[
+                                            ${column.name} like #{filter.value, jdbcType=VARCHAR}
+                                        ]]>
+                                    </when>
+                                    <when test="filter.type == 'upper'">
+                                        <![CDATA[
+                                            upper(${column.name}) like upper(#{filter.value, jdbcType=VARCHAR})
+                                        ]]>
+                                    </when>
+                                    <when test="filter.type == 'lower'">
+                                        <![CDATA[
+                                            lower(${column.name}) like lower(#{filter.value, jdbcType=VARCHAR})
+                                        ]]>
+                                    </when>
+                                </choose>
+                            </otherwise>
+                        </choose>
+                    </foreach>
+                </when>
+                <when test="filter.operate == 'or'">
+                    <foreach collection="filter.valueList" item="value" separator="or" open="and (" close=")">
+                        <foreach collection="filter.columnList" item="column" separator="or" open="(" close=")">
+                            <choose>
+                                <when test="column.type == 'Date'">
+                                    <if test="forceFilter != null and (forceFilter == 'all' or forceFilter == 'date')">
+                                        <![CDATA[
+                                            $[@date_to_char(${column.name} | ${column.format})] like #{value, jdbcType=VARCHAR}
+                                        ]]>
+                                    </if>
+                                </when>
+                                <otherwise>
+                                    <choose>
+                                        <when test="filter.type == null">
+                                            <![CDATA[
+                                                ${column.name} like #{value, jdbcType=VARCHAR}
+                                            ]]>
+                                        </when>
+                                        <when test="filter.type == 'upper'">
+                                            <![CDATA[
+                                                upper(${column.name}) like upper(#{value, jdbcType=VARCHAR})
+                                            ]]>
+                                        </when>
+                                        <when test="filter.type == 'lower'">
+                                            <![CDATA[
+                                                lower(${column.name}) like lower(#{value, jdbcType=VARCHAR})
+                                            ]]>
+                                        </when>
+                                    </choose>
+                                </otherwise>
+                            </choose>
+                        </foreach>
+                    </foreach>
+                </when>
+                <when test="filter.operate == 'and'">
+                    <foreach collection="filter.valueList" item="value" separator="and" open="and (" close=")">
+                        <foreach collection="filter.columnList" item="column" separator="or" open="(" close=")">
+                            <choose>
+                                <when test="column.type == 'Date'">
+                                    <if test="forceFilter != null and (forceFilter == 'all' or forceFilter == 'date')">
+                                        <![CDATA[
+                                            $[@date_to_char(${column.name} | ${column.format})] like #{value, jdbcType=VARCHAR}
+                                        ]]>
+                                    </if>
+                                </when>
+                                <otherwise>
+                                    <choose>
+                                        <when test="filter.type == null">
+                                            <![CDATA[
+                                                ${column.name} like #{value, jdbcType=VARCHAR}
+                                            ]]>
+                                        </when>
+                                        <when test="filter.type == 'upper'">
+                                            <![CDATA[
+                                                upper(${column.name}) like upper(#{value, jdbcType=VARCHAR})
+                                            ]]>
+                                        </when>
+                                        <when test="filter.type == 'lower'">
+                                            <![CDATA[
+                                                lower(${column.name}) like lower(#{value, jdbcType=VARCHAR})
+                                            ]]>
+                                        </when>
+                                    </choose>
+                                </otherwise>
+                            </choose>
+                        </foreach>
+                    </foreach>
+                </when>
+            </choose>
+        </if>
+        <if test="filterMoreList != null">
+            <foreach collection="filterMoreList" item="column" separator="and" open="and">
+                <choose>
+                    <when test="column.ors != null">
+                        <foreach collection="column.ors" item="columnOr" separator="or" open="(" close=")">
+                            <choose>
+                                <when test="columnOr.operate == 'is'">
+                                    <![CDATA[
+                                        ${columnOr.name} is null
+                                    ]]>
+                                </when>
+                                <when test="columnOr.operate == 'is not'">
+                                    <![CDATA[
+                                        ${columnOr.name} is not null
+                                    ]]>
+                                </when>
+                                <otherwise>
+                                    <choose>
+                                        <when test="columnOr.type == 'Number'">
+                                            <if test="column.operate == 'in'">
+                                                <![CDATA[
+                                                    ${columnOr.name} ${columnOr.operate} ${columnOr.value}
+                                                ]]>
+                                            </if>
+                                            <if test="column.operate != 'in'">
+                                                <![CDATA[
+                                                    ${columnOr.name} ${columnOr.operate} #{columnOr.value, jdbcType=NUMERIC}
+                                                ]]>
+                                            </if>
+                                        </when>
+                                        <when test="columnOr.type == 'Date'">
+                                            <choose>
+                                                <when test="columnOr.operate == '='.toString() or columnOr.operate == 'like'">
+                                                    <![CDATA[
+                                                        $[@date_to_char(${columnOr.name} | ${columnOr.format})] ${columnOr.operate} #{columnOr.value, jdbcType=VARCHAR}
+                                                    ]]>
+                                                </when>
+                                                <otherwise>
+                                                    <![CDATA[
+                                                        ${columnOr.name} ${columnOr.operate} $[@char_to_date(#{columnOr.value, jdbcType=VARCHAR} | ${columnOr.format})]
+                                                    ]]>
+                                                </otherwise>
+                                            </choose>
+                                        </when>
+                                        <otherwise>
+                                            <![CDATA[
+                                                ${columnOr.name} ${columnOr.operate} #{columnOr.value, jdbcType=VARCHAR}
+                                            ]]>
+                                        </otherwise>
+                                    </choose>
+                                </otherwise>
+                            </choose>
+                        </foreach>
+                    </when>
+                    <when test="column.operate == 'is'">
+                        <![CDATA[
+                            ${column.name} is null
+                        ]]>
+                    </when>
+                    <when test="column.operate == 'is not'">
+                        <![CDATA[
+                            ${column.name} is not null
+                        ]]>
+                    </when>
+                    <when test="column.operate == 'in'">
+                        <![CDATA[
+                            ${column.name}
+                        ]]>
+                        <foreach collection="column.value" item="v" open="in (" separator="," close=")">
+                            <![CDATA[
+                                #{v}
+                            ]]>
+                        </foreach>
+                    </when>
+                    <otherwise>
+                        <choose>
+                            <when test="column.type == 'Number'">
+                                <if test="column.operate == 'in'">
+                                    <![CDATA[
+                                        ${column.name} ${column.operate} ${column.value}
+                                    ]]>
+                                </if>
+                                <if test="column.operate != 'in'">
+                                    <![CDATA[
+                                        ${column.name} ${column.operate} #{column.value, jdbcType=NUMERIC}
+                                    ]]>
+                                </if>
+                            </when>
+                            <when test="column.type == 'Date'">
+                                <choose>
+                                    <when test="column.operate == '='.toString() or column.operate == 'like'">
+                                        <![CDATA[
+                                            $[@date_to_char(${column.name} | ${column.format})] ${column.operate} #{column.value, jdbcType=VARCHAR}
+                                        ]]>
+                                    </when>
+                                    <otherwise>
+                                        <![CDATA[
+                                            ${column.name} ${column.operate} $[@char_to_date(#{column.value, jdbcType=VARCHAR} | ${column.format})]
+                                        ]]>
+                                    </otherwise>
+                                </choose>
+                            </when>
+                            <otherwise>
+                                <choose>
+                                    <when test="column.operate == 'or'">
+                                        <foreach collection="column.value" item="value" separator="or" open="(" close=")">
+                                            <![CDATA[
+                                                ${column.name} = #{value, jdbcType=VARCHAR}
+                                            ]]>
+                                        </foreach>
+                                    </when>
+                                    <otherwise>
+                                        <![CDATA[
+                                            ${column.name} ${column.operate} #{column.value, jdbcType=VARCHAR}
+                                        ]]>
+                                    </otherwise>
+                                </choose>
+                            </otherwise>
+                        </choose>
+                    </otherwise>
+                </choose>
+            </foreach>
+        </if>
+    </sql>
+    <sql id="queryColumns">
+        <if test="columnList == null">
+            <![CDATA[
+            *
+            ]]>
+        </if>
+        <if test="columnList != null">
+            <foreach collection="columnList" item="column" separator=", ">
+                <if test="column.confuse == null">
+                    <![CDATA[
+                    ${column.name}
+                    ]]>
+                </if>
+                <if test="column.confuse != null">
+                    <![CDATA[
+                    $[@confuse(${column.name} | ${column.confuse})] ${column.name}
+                    ]]>
+                </if>
+            </foreach>
+        </if>
+    </sql>
+    <sql id="order">
+        <if test="orderList != null">
+            <foreach collection="orderList" item="column" separator="," open="order by ">
+                ${column.name} ${column.sort}
+            </foreach>
+        </if>
+    </sql>
+
+    <select id="selectByFilter" parameterType="Map" resultType="Dynamic">
+        <![CDATA[
+            select
+        ]]>
+        <include refid="queryColumns"/>
+        <![CDATA[
+            from ${tableName}
+        ]]>
+        <where>
+            <include refid="query"/>
+        </where>
+        <include refid="order"/>
+    </select>
+    <select id="selectMapByFilter" parameterType="Map" resultType="Map">
+        <![CDATA[
+            select
+        ]]>
+        <include refid="queryColumns"/>
+        <![CDATA[
+            from ${tableName}
+        ]]>
+        <where>
+            <include refid="query"/>
+        </where>
+        <include refid="order"/>
+    </select>
+    <select id="pageByFilter" parameterType="Map" resultType="Dynamic">
+        <![CDATA[
+            select
+        ]]>
+        <include refid="queryColumns"/>
+        <![CDATA[
+            from ${tableName}
+        ]]>
+        <where>
+            <include refid="query"/>
+        </where>
+        <include refid="order"/>
+    </select>
+    <select id="pageMapByFilter" parameterType="Map" resultType="Map">
+        <![CDATA[
+            select
+        ]]>
+        <include refid="queryColumns"/>
+        <![CDATA[
+            from ${tableName}
+        ]]>
+        <where>
+            <include refid="query"/>
+        </where>
+        <include refid="order"/>
+    </select>
+    <select id="countByFilter" parameterType="Map" resultType="int">
+        <![CDATA[
+            select count(1)
+            from ${tableName}
+        ]]>
+        <where>
+            <include refid="query"/>
+        </where>
+    </select>
+    <select id="selectForCommon" parameterType="Map" resultType="Dynamic">
+        <![CDATA[
+            select
+        ]]>
+        <if test="distinct != null and distinct == 'true'">
+            <![CDATA[
+            distinct
+        ]]>
+        </if>
+        <include refid="queryColumns"/>
+        <![CDATA[
+            from ${tableName}
+        ]]>
+        <where>
+            <include refid="query"/>
+        </where>
+        <include refid="order"/>
+    </select>
+    <select id="selectById" parameterType="Map" resultType="Dynamic">
+        <![CDATA[
+            select * from ${tableName}
+        ]]>
+        <foreach collection="keys" item="column" open="where" separator="and">
+            <![CDATA[
+                ${column.name} = #{column.value}
+            ]]>
+        </foreach>
+    </select>
+    <select id="selectMapById" parameterType="Map" resultType="Map">
+        <![CDATA[
+            select * from ${tableName}
+        ]]>
+        <foreach collection="keys" item="column" open="where" separator="and">
+            <![CDATA[
+                ${column.name} = #{column.value}
+            ]]>
+        </foreach>
+    </select>
+    <select id="initForCommon" parameterType="Map" resultType="Dynamic">
+        <![CDATA[
+            select
+        ]]>
+        <include refid="queryColumns"/>
+        <![CDATA[
+            from ${tableName}
+        ]]>
+        <where>
+            <if test="value != null and columnList != null">
+                <foreach collection="columnList" item="column" separator=" or " open="(" close=")">
+                    <![CDATA[
+                    ${column.name} = #{value}
+                    ]]>
+                </foreach>
+            </if>
+            <include refid="query"/>
+        </where>
+        <include refid="order"/>
+    </select>
+    <select id="selectVersion" parameterType="Map" resultType="Integer">
+        <![CDATA[
+            select ${versionNumberName} from ${tableName}
+            where ${datacenterIdName} = #{datacenterId}
+        ]]>
+    </select>
+    <insert id="insert" parameterType="Map">
+        <![CDATA[
+            insert into ${tableName}
+        ]]>
+        <foreach collection="columns" item="column" open="(" separator="," close=")">
+            <![CDATA[
+                ${column.name}
+            ]]>
+        </foreach>
+        <foreach collection="columns" item="column" open="values(" separator="," close=")">
+            <choose>
+                <when test="column.value == null">
+                    <![CDATA[
+                        null
+                    ]]>
+                </when>
+                <when test="column.type == 'Number'">
+                    <![CDATA[
+                        #{column.value, jdbcType=NUMERIC}
+                    ]]>
+                </when>
+                <when test="column.type == 'Date'">
+                    <if test="column.value.length() == 19">
+                        <![CDATA[
+                            $[@char_to_date(#{column.value, jdbcType=VARCHAR} | 'datetime')]
+                        ]]>
+                    </if>
+                    <if test="column.value.length() == 10">
+                        <![CDATA[
+                            $[@char_to_date(#{column.value, jdbcType=VARCHAR} | 'date')]
+                        ]]>
+                    </if>
+                </when>
+                <otherwise>
+                    <![CDATA[
+                        #{column.value}
+                    ]]>
+                </otherwise>
+            </choose>
+        </foreach>
+    </insert>
+    <update id="update" parameterType="Map">
+        <![CDATA[
+            update ${tableName}
+        ]]>
+        <foreach collection="columns" item="column" open="set" separator=",">
+            <choose>
+                <when test="column.type == 'Number'">
+                    <![CDATA[
+                        ${column.name} = #{column.value, jdbcType=NUMERIC}
+                    ]]>
+                </when>
+                <when test="column.type == 'Date'">
+                    <if test="column.value != null">
+                        <if test="column.value.length() == 19">
+                            <![CDATA[
+                                ${column.name} = $[@char_to_date(#{column.value, jdbcType=VARCHAR} | 'datetime')]
+                            ]]>
+                        </if>
+                        <if test="column.value.length() == 10">
+                            <![CDATA[
+                                ${column.name} = $[@char_to_date(#{column.value, jdbcType=VARCHAR} | 'date')]
+                            ]]>
+                        </if>
+                    </if>
+                </when>
+                <otherwise>
+                    <![CDATA[
+                        ${column.name} = #{column.value}
+                    ]]>
+                </otherwise>
+            </choose>
+        </foreach>
+        <foreach collection="keys" item="column" open="where" separator="and">
+            <choose>
+                <when test="column.type == 'Number'">
+                    <![CDATA[
+                        ${column.name} = #{column.value, jdbcType=NUMERIC}
+                    ]]>
+                </when>
+                <when test="column.type == 'Date'">
+                    <if test="column.value != null">
+                        <if test="column.value.length() == 19">
+                            <![CDATA[
+                                ${column.name} = $[@char_to_date(#{column.value, jdbcType=VARCHAR} | 'datetime')]
+                            ]]>
+                        </if>
+                        <if test="column.value.length() == 10">
+                            <![CDATA[
+                                ${column.name} = $[@char_to_date(#{column.value, jdbcType=VARCHAR} | 'date')]
+                            ]]>
+                        </if>
+                    </if>
+                </when>
+                <otherwise>
+                    <![CDATA[
+                        ${column.name} = #{column.value}
+                    ]]>
+                </otherwise>
+            </choose>
+        </foreach>
+    </update>
+    <delete id="deleteByIds">
+        <![CDATA[
+			delete from ${tableName}
+		]]>
+        <if test="keysList != null">
+            <foreach collection="keysList" item="keys" open="where" separator="or">
+                <foreach collection="keys" item="column" open="(" separator="and" close=")">
+                    <![CDATA[
+                        ${column.name} = #{column.value}
+                    ]]>
+                </foreach>
+            </foreach>
+        </if>
+        <if test="keyValues != null">
+            <foreach collection="keyValues" item="keyValue" open="where" separator="or">
+                <![CDATA[
+                    ${keyColumnName} = #{keyValue}
+                ]]>
+            </foreach>
+        </if>
+    </delete>
+</mapper>

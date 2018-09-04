@@ -1,0 +1,342 @@
+<div v-cloak data-container="projectConfigAdd">
+    <component is="bv-form" :key="tags.formId" v-bind="config"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const'], function ($, util, Const) {
+		var vm = util.bind({
+			container: 'projectConfigAdd',
+			data: {
+				tags: {
+					formId: 'projectConfigAddForm'
+				},
+				config: {
+					title: '新增合作项目',
+					saveUrl: '/project/addProject',
+					formGenerator: 'id',
+					columns: [
+						{
+                            name: 'agencyType',
+                            head: '机构类型',
+                            edit: {
+                                type: 'select'
+                            },
+                            config: {
+                                entityName:'DictionarySub',
+                                distinct: true,
+                                initParamList:[
+                                    {
+                                        name:'dictionaryId',
+                                        operate:'=',
+                                        value:'PL0202'
+                                    },
+                                    {
+                                        name:'delFlag',
+                                        operate:'=',
+                                        value:'NORMAL'
+                                    }
+                                ],
+                                code: 'subValue',
+                                desc: 'subName',
+                                attr: {
+                                    'data-validation-engine': 'validate[required]',
+                                    'data-errormessage-value-missing': '不能为空'
+                                }
+                            }
+                        },
+                        {
+                            name: 'agencyId',
+                            head: '合作机构',
+                            edit: {
+                                type: 'select'
+                            },
+                            config: {
+                                load: 'agencyType',
+                                entityName:'CooperationAgency',
+                                distinct: true,
+                                initParamList:[
+                                    {
+                                        name:'delFlag',
+                                        operate:'=',
+                                        value:'NORMAL'
+                                    },
+                                    {
+                                        name:'agencyType',
+                                        operate:'=',
+                                        from:'agencyType'
+                                    }
+                                ],
+                                code: 'id',
+                                desc: 'agencyName',
+                                attr: {
+                                    'data-validation-engine': 'validate[required]',
+                                    'data-errormessage-value-missing': '不能为空'
+                                }
+                            }
+                        },
+                        {
+                            name: 'projectType',
+                            head: '项目模式',
+                            edit:{
+                                type: 'select'
+                            },
+                            config: {
+                                defaultValue: '',
+                                preset: 'json',
+                                choose: Const.dicts.PL0402,
+                                validate: {
+                                    required: true
+                                }
+                            }
+                        },
+                        {
+                            name: 'bankId',
+                            head: '支持银行',
+                            edit:{
+                                type: 'select'
+                            },
+                            config: {
+                                entityName:'BankInfo',
+                                distinct: true,
+                                initParamList:[
+                                    {
+                                        name:'delFlag',
+                                        operate:'=',
+                                        value:'NORMAL'
+                                    }
+                                ],
+                                code: 'id',
+                                desc: 'bankName',
+                            }
+                        },
+                        {
+                            name: 'projectName',
+                            head: '项目名称',
+                            config: {
+                                validate: {
+                                    required: true
+                                }
+                            }
+                        },
+                        {
+                            name: 'loanAmount',
+                            head: '放款总量'
+                        },
+                        {
+                            name: 'loanLimitMonth',
+                            head: '放款限额(月)'
+                        },
+                        {
+                            name: 'loanLimitDay',
+                            head: '放款限额(日)'
+                        },
+                        {
+                            name: 'isAssure',
+                            head: '是否担保',
+                            edit:{
+                                type: 'select'
+                            },
+                            config: {
+                                defaultValue: '',
+                                preset: 'json',
+                                choose: Const.dicts.PL0109,
+                                validate: {
+                                    required: true
+                                }
+                            }
+                        },
+                        /*{
+                            name: 'collateralId',
+                            head: '担保机构'
+                        },*/
+                        {
+                            name: 'projectPriority',
+                            head: '优先级',
+                            config: {
+                                validate: {
+                                    required: true
+                                }
+                            }
+                        },
+                        {
+                            name: 'projectStatus',
+                            head: '项目状态',
+                            edit:{
+                                type: 'select'
+                            },
+                            config: {
+                                defaultValue: '',
+                                preset: 'json',
+                                choose: Const.dicts.PL0201,
+                                validate: {
+                                    required: true
+                                }
+                            }
+                        },
+                        {
+                            name: 'effectTime',
+                            head: '项目生效时间',
+                            config: {
+                                validate: {
+                                    format: 'datetime',
+                                    defaultValueFrom: util.date('date') + ' 00:00:00',
+                                    required: true
+                                }
+                            }
+                        },
+                        {
+                            name: 'cashProjectId',
+                            head: '消金产品',
+                            edit:{
+                                type: 'select'
+                            },
+                            config: {
+                                defaultValue: '',
+                                preset: 'json',
+                                choose: '',
+                                validate: {
+                                    required: true
+                                }
+                            }
+                        },
+                        {
+                            name: '',
+                            head: '支持期数',
+                            config: {
+                                validate: {
+                                    required: true
+                                }
+                            }
+                        },
+                        {
+                            name: '',
+                            head: '还款方式',
+                            config: {
+                                validate: {
+                                    required: true
+                                }
+                            }
+                        },
+                        {
+                            name: '',
+                            head: '设置渠道',
+                            config: {
+                                validate: {
+                                    required: true
+                                }
+                            }
+                        },
+                        {
+                            name: 'agencyRatio',
+                            head: '机构资金占比',
+                            config: {
+                                validate: {
+                                    required: true
+                                }
+                            }
+                        },
+                        {
+                            name: 'cashYieldRate',
+                            head: '消金收益率',
+                            config: {
+                                validate: {
+                                    required: true
+                                }
+                            }
+                        },
+                        {
+                            name: 'agencyYieldRate',
+                            head: '机构收益率',
+                            config: {
+                                validate: {
+                                    required: true
+                                }
+                            }
+                        },
+                        {
+                            name: 'creditTerm',
+                            head: '授信有效期限'
+                        },
+                        {
+                            name: 'creditWay',
+                            head: '征信查询方式',
+                            config: {
+                                validate: {
+                                    required: true
+                                }
+                            }
+                        },
+                        {
+                            name: 'custLimitStart',
+                            head: '用户额度区间开始'
+                        },
+                        {
+                            name: 'custLimitEnd',
+                            head: '用户额度区间结束'
+                        },
+                        {
+                            name: 'custLoanStart',
+                            head: '用户贷款区间开始'
+                        },
+                        {
+                            name: 'custLoanEnd',
+                            head: '用户贷款区间结束'
+                        },
+                        {
+                            name: 'custSexDimension',
+                            head: '用户性别维度'
+                        },
+                        {
+                            name: 'custAgeStart',
+                            head: '用户年龄区间开始'
+                        },
+                        {
+                            name: 'custAgeEnd',
+                            head: '用户年龄区间结束'
+                        },
+                        {
+                            name: 'custFirstCreditAgo',
+                            head: '用户首次用信距今天数'
+                        },
+                        {
+                            name: 'busiDayStart',
+                            head: '业务每日开始时间',
+                            config: {
+                                format: 'datetime',
+                                defaultValueFrom: util.date('date') + ' 00:00:00'
+                            }
+                        },
+                        {
+                            name: 'busiDayEnd',
+                            head: '业务每日结束时间',
+                            config: {
+                                format: 'datetime',
+                                defaultValueFrom: util.date('date') + ' 00:00:00'
+                            }
+                        },
+                        {
+                            name: 'mateRule',
+                            head: '匹配规则'
+                        },
+                        {
+                            name: 'compensatoryTime',
+                            head: '代偿时间',
+                            config: {
+                                format: 'datetime',
+                                defaultValueFrom: util.date('date') + ' 00:00:00'
+                            }
+                        }
+					],
+					operates: [
+						{
+                            text: '保存',
+                            clazz: 'btn-primary',
+                            icon: 'icon-save',
+                            loading: '处理中...',
+                            preset: 'save'
+                        }
+					]
+				}
+			}
+		});
+	});
+</script>

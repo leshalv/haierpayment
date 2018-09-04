@@ -1,0 +1,27 @@
+#生产环境配置
+haiercash:
+  pl:
+    profile: product
+
+server:
+  port: 7901
+
+redis:
+  cluster:
+    address: 10.164.207.233:7000,10.164.207.233:7001,10.164.207.233:7002,10.164.207.233:7003,10.164.207.234:7000,10.164.207.234:7001,10.164.207.234:7002,10.164.207.234:7003,10.164.207.235:7000,10.164.207.235:7001,10.164.207.235:7002,10.164.207.235:7003
+
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@loan-dbla01.haiercash.com:1521/PLLOAN_SRV
+    username: plloan
+    password: ENC(pdGVKsdhGvySQuIs3sNEjA==)
+
+eureka:
+  client:
+      serviceUrl:
+        defaultZone: http://10.164.196.180:1180/eureka/,http://10.164.196.182:1180/eureka/,http://10.164.196.185:1180/eureka/
+
+rest:
+  controller:
+    instance:
+      lastLoanQuery: ACRM

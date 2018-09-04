@@ -1,0 +1,84 @@
+<div v-cloak data-container="agencyConfigAdd">
+    <component is="bv-form" :key="tags.formId" v-bind="config"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const'], function ($, util, Const) {
+		var vm = util.bind({
+			container: 'agencyConfigAdd',
+			data: {
+				tags: {
+					formId: 'agencyConfigAddForm'
+				},
+				config: {
+					title: '新增机构配置',
+					saveUrl: '/agency/addAgency',
+					formGenerator: 'id',
+					columns: [
+						{
+							name: 'id',
+							head: '机构ID',
+							edit: {
+							    type: 'hidden'
+							}
+						},
+						{
+							name: 'agencyName',
+							head: '合作机构名称'
+						},
+						{
+							name: 'agencyLiaisons',
+							head: '合作机构联系人'
+						},
+						{
+							name: 'agencyLiaisonsMobile',
+							head: '联系人电话'
+						},
+						{
+							name: 'agencyPriority',
+							head: '优先级'
+						},
+						{
+							name: 'cooperationStatus',
+							head: '合作状态',
+                            edit:{
+                                type: 'select'
+                            },
+                            config: {
+                                defaultValue: '10',
+                                preset: 'json',
+                                choose: Const.dicts.PL0201,
+                                validate: {
+                                    required: true
+                                }
+                            }
+						},
+						{
+							name: 'agencyType',
+							head: '机构类型',
+                            edit:{
+                                type: 'select'
+                            },
+                            config: {
+                                defaultValue: '',
+                                preset: 'json',
+                                choose: Const.dicts.agencyTypeStatus,
+                                validate: {
+                                    required: true
+                                }
+                            }
+						}
+					],
+					operates: [
+						{
+                            text: '保存',
+                            clazz: 'btn-primary',
+                            icon: 'icon-save',
+                            loading: '处理中...',
+                            preset: 'save'
+                        }
+					]
+				}
+			}
+		});
+	});
+</script>

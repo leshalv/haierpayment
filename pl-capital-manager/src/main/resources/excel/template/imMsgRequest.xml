@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workbook>
+    <worksheet idx="0">
+        <section startRow="0" endRow="0"></section>
+        <loop startRow="1" endRow="1" items="imMsgRequestList" var="imMsgRequest" varType="java.util.HashMap">
+            <section startRow="1" endRow="1">
+
+                <mapping row="1" col="0">imMsgRequest.bizType</mapping>
+                <mapping row="1" col="1">imMsgRequest.msgTitle</mapping>
+                <mapping row="1" col="2">imMsgRequest.msgContent</mapping>
+                <mapping row="1" col="3">imMsgRequest.userIds</mapping>
+
+            </section>
+            <loopbreakcondition>
+                <rowcheck offset="0">
+                    <cellcheck offset="0"></cellcheck>
+                    <cellcheck offset="1"></cellcheck>
+                    <cellcheck offset="2"></cellcheck>
+                    <cellcheck offset="3"></cellcheck>
+                </rowcheck>
+            </loopbreakcondition>
+        </loop>
+    </worksheet>
+</workbook>

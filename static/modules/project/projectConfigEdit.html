@@ -1,0 +1,245 @@
+<div v-cloak data-container="projectConfigEdit">
+    <component is="bv-form" :key="tags.formId" v-bind="config"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const'], function ($, util, Const) {
+        var param = util.cache('modal').data;
+		var vm = util.bind({
+			container: 'projectConfigEdit',
+			data: {
+				tags: {
+					formId: 'projectConfigEditForm'
+				},
+				config: {
+					title: '修改机构配置',
+					saveUrl: '/project/updateProject',
+					formGenerator: 'id',
+					columns: [
+						{
+                            name: 'id',
+                            head: 'ID',
+							config: {
+								value: param.id
+							},
+                            edit: {
+                                type: 'hidden'
+                            }
+                        },
+                        {
+                            name: 'agencyId',
+                            head: '合作机构表主键ID',
+							config: {
+								value: param.agencyId
+							}
+                        },
+                        {
+                            name: 'projectName',
+                            head: '项目名称',
+							config: {
+								value: param.projectName
+							}
+                        },
+                        {
+                            name: 'projectType',
+                            head: '合作项目模式',
+							config: {
+								value: param.projectType
+							}
+                        },
+                        {
+                            name: 'projectStatus',
+                            head: '合作项目状态',
+							config: {
+								value: param.projectStatus
+							}
+                        },
+                        {
+                            name: 'isAssure',
+                            head: '合作项目是否担保',
+							config: {
+								value: param.isAssure
+							}
+                        },
+                        {
+                            name: 'collateralId',
+                            head: '合作项目担保机构',
+							config: {
+								value: param.collateralId
+							}
+                        },
+                        {
+                            name: 'effectTime',
+                            head: '项目生效时间',
+							config: {
+								value: param.effectTime
+							}
+                        },
+                        {
+                            name: 'loanAmount',
+                            head: '放款总量',
+							config: {
+								value: param.agencyTypeId
+							}
+                        },
+                        {
+                            name: 'loanLimitMonth',
+                            head: '放款限额(月)',
+							config: {
+								value: param.loanLimitMonth
+							}
+                        },
+                        {
+                            name: 'loanLimitDay',
+                            head: '放款限额(日)',
+							config: {
+								value: param.loanLimitDay
+							}
+                        },
+                        {
+                            name: 'projectPriority',
+                            head: '优先级',
+							config: {
+								value: param.projectPriority
+							}
+                        },
+                        {
+                            name: 'cashYieldRate',
+                            head: '消金收益率',
+							config: {
+								value: param.cashYieldRate
+							}
+                        },
+                        {
+                            name: 'agencyRatio',
+                            head: '合作机构资金占比',
+							config: {
+								value: param.agencyRatio
+							}
+                        },
+                        {
+                            name: 'agencyYieldRate',
+                            head: '合作机构收益率',
+							config: {
+								value: param.agencyYieldRate
+							}
+                        },
+                        {
+                            name: 'creditTerm',
+                            head: '授信有效期限',
+							config: {
+								value: param.creditTerm
+							}
+                        },
+                        {
+                            name: 'creditWay',
+                            head: '征信查询方式',
+							config: {
+								value: param.creditWay
+							}
+                        },
+                        {
+                            name: 'custLimitStart',
+                            head: '用户额度区间开始',
+							config: {
+								value: param.custLimitStart
+							}
+                        },
+                        {
+                            name: 'custLimitEnd',
+                            head: '用户额度区间结束',
+							config: {
+								value: param.custLimitEnd
+							}
+                        },
+                        {
+                            name: 'custLoanStart',
+                            head: '用户贷款区间开始',
+							config: {
+								value: param.custLoanStart
+							}
+                        },
+                        {
+                            name: 'custLoanEnd',
+                            head: '用户贷款区间结束',
+							config: {
+								value: param.custLoanEnd
+							}
+                        },
+                        {
+                            name: 'custSexDimension',
+                            head: '用户性别维度',
+							config: {
+								value: param.custSexDimension
+							}
+                        },
+                        {
+                            name: 'custAgeStart',
+                            head: '用户年龄区间开始',
+							config: {
+								value: param.custAgeStart
+							}
+                        },
+                        {
+                            name: 'custAgeEnd',
+                            head: '用户年龄区间结束',
+							config: {
+								value: param.custAgeEnd
+							}
+                        },
+                        {
+                            name: 'custFirstCreditAgo',
+                            head: '用户首次用信距今天数',
+							config: {
+								value: param.custFirstCreditAgo
+							}
+                        },
+                        {
+                            name: 'busiDayStart',
+                            head: '业务每日开始时间',
+							config: {
+								value: param.busiDayStart
+							}
+                        },
+                        {
+                            name: 'busiDayEnd',
+                            head: '业务每日结束时间',
+							config: {
+								value: param.busiDayEnd
+							}
+                        },
+                        {
+                            name: 'mateRule',
+                            head: '匹配规则',
+							config: {
+								value: param.mateRule
+							}
+                        },
+                        {
+                            name: 'compensatoryTime',
+                            head: '代偿时间',
+							config: {
+								value: param.compensatoryTime
+							}
+                        },
+                        {
+                            name: 'termCharge',
+                            head: '期限服务费率',
+							config: {
+								value: param.termCharge
+							}
+                        }
+					],
+					operates: [
+						{
+                            text: '保存',
+                            clazz: 'btn-primary',
+                            icon: 'icon-save',
+                            loading: '处理中...',
+                            preset: 'save'
+                        }
+					]
+				}
+			}
+		});
+	});
+</script>

@@ -1,0 +1,68 @@
+task generateInstallPackages(type: Copy) {
+
+    copy {
+        from("build/libs")
+        into("build/install")
+        include("${project.name}-${jar.version}-exec.jar")
+        rename("${project.name}-${jar.version}-exec.jar", "${project.name}-exec.jar")
+    }
+
+    from('src/main/resources/application.yml') {
+        into('config')
+    }
+    /*from("src/main/profiles/${profile}") {
+        into('config')
+    }*/
+    /*
+    from("../../bin/${profile}/pgwTradeRelease.sh") {
+        into('bin')
+    }
+
+    from('../../bin/pgwTradeRestart.sh') {
+        into('bin')
+    }
+
+    from('../../bin/pgwTradeStop.sh') {
+        into('bin')
+    }
+
+    from('../../bin/project_release.sh') {
+        into('bin')
+    }
+    from('../../bin/startSpringJarServer.sh') {
+        into('bin')
+    }
+    from('../../bin/stopSpringJarServer.sh') {
+        into('bin')
+    }
+    from('../../bin/readme') {
+        into('bin')
+    }
+    //cd build/install/bin/
+    destinationDir file('build/install/bin/')
+    rename ("pgwTradeRelease.sh", "release.sh")
+    rename ("pgwTradeRestart.sh", "restart.sh")
+    rename ("pgwTradeStop.sh", "stop.sh")*/
+}
+task zip(type: org.gradle.api.tasks.bundling.Zip) {
+    from('build/install/')
+    baseName = "${project.name}"
+}
+task prepareZip(type: org.gradle.api.tasks.bundling.Zip) {
+
+    from('build/install/')
+    baseName = "${project.name}-prepare"
+    from("src/main/resources/") {
+        into('config')
+    }
+    /* from("../../bin/prepare/pgwTradeRelease.sh") {
+         into('bin')
+     }*/
+}
+prepareZip.dependsOn(generateInstallPackages)
+if (profile == "product") {
+    zip.dependsOn(prepareZip)
+} else {
+    zip.dependsOn(generateInstallPackages)
+}
+build.doLast {generateInstallPackages}

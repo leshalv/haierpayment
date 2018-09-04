@@ -1,0 +1,106 @@
+<div data-container="editMsgTmplConfig">
+    <component is="bv-form" :key="tags.formId" v-bind="config"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const'], function ($, util, Const) {
+        var vm = util.bind({
+            container: 'editMsgTmplConfig',
+            data: {
+                tags: {
+                    formId: 'editMsgTmplConfigForm'
+                },
+                config: {
+                    title: '消息模板配置',
+                    saveUrl: '/msgtmplconfig/save',
+                    columns: [
+                        {
+                            name: 'id',
+                            head: 'id',
+                            edit: {
+                                type: 'hidden'
+                            }
+                        },
+                        {
+                            name: 'tmplName',
+                            head: '模板名称',
+                            edit: {
+                                type: 'textfield'
+                            },
+                            config: {
+                                attr: {
+                                    maxlength: 33,
+                                    'data-validation-engine': 'validate[required]'
+
+                                }
+                            }
+                        },
+                        {
+                            name: 'tmplTitle',
+                            head: '模板标题',
+                            edit: {
+                                type: 'textfield'
+                            },
+                            config: {
+                                attr: {
+                                    maxlength: 33,
+                                    'data-validation-engine': 'validate[required]'
+
+                                }
+                            }
+                        },
+                        {
+                            name: 'tmplContent',
+                            head: '模板内容',
+                            edit: {
+                                type: 'textarea'
+                            },
+                            config: {
+                                attr: {
+                                    maxlength: 166,
+                                    'data-validation-engine': 'validate[required]'
+                                }
+                            }
+                        },
+                        {
+                            name: 'remark',
+                            head: '备注',
+                            edit: {
+                                type: 'textfield'
+                            },
+                            config: {
+                                attr: {
+                                    maxlength: 66
+                                }
+                            }
+                        },
+                        {
+                            name: 'status',
+                            head: '状态',
+                            edit:{
+                                type: 'select'
+                            },
+                            config: {
+                                defaultValue: 'ENABLE',
+                                preset: 'enums',
+                                choose: Const.enums.enableStatusEnum,
+                                validate: {
+                                    required: true
+                                }
+                            }
+                        },
+
+                    ],
+                    operates: [
+                        {
+                            text: '保存',
+                            clazz: 'btn-primary',
+                            icon: 'icon-save',
+                            loading: '处理中...',
+                            preset: 'save'
+                        }
+                    ]
+                }
+            }
+        });
+    });
+</script>

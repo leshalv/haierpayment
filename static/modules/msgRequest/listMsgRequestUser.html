@@ -1,0 +1,82 @@
+<div data-container="listMsgRequestUser">
+    <component is="bv-table" :key="tags.tableId" v-bind="config"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const'], function($, util, Const) {
+        var requestId = util.gup('requestId');
+        var vm = util.bind({
+            container: 'listMsgRequestUser',
+            data: {
+                tags: {
+                    tableId: 'msgRequestUserTable'
+                },
+                config: {
+                    entityName: 'MsgRequestUser',
+                    keys: 'id',
+                    select: 'checkbox',
+                    orders: 'createTime desc',
+                    filterLayout: 'filterMore',
+                    initParamList: [
+                        {
+                            name: 'requestId',
+                            operate: '=',
+                            value: requestId
+                        }
+                    ],
+                    columns: [
+                        {
+                            name: 'id',
+                            head: 'ID',
+                            filter: '='
+                        },
+                        {
+                            name: 'requestId',
+                            head: '请求ID',
+                            filter: '='
+                        },
+                        {
+                            name: 'userId',
+                            head: '接收用户ID',
+                            filter: '='
+                        },
+                        {
+                            name: 'custNo',
+                            head: '接收者CRM_NO'
+                        },
+                        {
+                            name: 'custType',
+                            head: '接收者账户类型',
+                            format: 'dict',
+                            config: {
+                                preset: 'enums',
+                                choose: Const.enums.cRMTypeEnum
+                            }
+                        },
+                        {
+                            name: 'custName',
+                            head: '接收者姓名'
+                        },
+                        {
+                            name: 'certNo',
+                            head: '接收者证件号码'
+                        },
+                        {
+                            name: 'deviceNo',
+                            head: '接收终端账号'
+                        },
+                        {
+                            name: 'createTime',
+                            head: '创建时间'
+                        },
+                        {
+                            name: 'modifyTime',
+                            head: '修改时间'
+                        }
+                    ]
+
+                }
+            }
+        });
+    });
+</script>
+

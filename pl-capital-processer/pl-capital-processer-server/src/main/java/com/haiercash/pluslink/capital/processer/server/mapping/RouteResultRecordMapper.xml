@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haiercash.pluslink.capital.processer.server.dao.RouteResultRecordDao">
+    <sql id="routeResultRecordColumns">
+        AGENCY_ID,
+        PROJECT_ID,
+        CUST_ID
+    </sql>
+    <select id="selectByApplSeq" resultType="com.haiercash.pluslink.capital.data.RouteResultRecord">
+        SELECT
+        <include refid="routeResultRecordColumns"/>
+        FROM
+        (SELECT AGENCY_ID,PROJECT_ID,CUST_ID,ROWNUM as SN FROM PL_ROUTE_RESULT_RECORD
+          <where>
+            APPL_SEQ = #{applSeq}
+          </where>
+          ORDER BY CREATE_DATE DESC)
+        <where>
+            SN=1
+        </where>
+    </select>
+
+</mapper>

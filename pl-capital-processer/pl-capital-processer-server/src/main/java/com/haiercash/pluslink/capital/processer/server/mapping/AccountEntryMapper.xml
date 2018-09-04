@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haiercash.pluslink.capital.processer.server.dao.AccountEntryDao">
+    <sql id="accountEntryColumns">
+        ID,
+        TRANS_ID,
+        ACCOUNT_ID,
+        ACCOUNT_TYPE,
+        VOUCHER_NO,
+        IS_CONTROL,
+        CONTROL_VALUE,
+        CONTROL_TYPE,
+        AMOUNT,
+        BALANCE_DIRECTION,
+        FREEZE_ID,
+        IS_CORRECT,
+        REMARK,
+        SUMMARY,
+        TRADE_FINISH_TIME,
+        CREATE_DATE,
+        UPDATE_DATE,
+        CREATE_BY,
+        UPDATE_BY,
+        ASS_CHECK_TYPE,
+        ASS_CHECK_CODE,
+        DEL_FLAG
+    </sql>
+    <insert id="insertAccountEntryList" parameterType="com.haiercash.pluslink.capital.data.AccountEntry">
+        INSERT INTO PL_ACCOUNT_ENTRY(
+        ID,
+        TRANS_ID,
+        ACCOUNT_ID,
+        ACCOUNT_TYPE,
+        VOUCHER_NO,
+        IS_CONTROL,
+        CONTROL_VALUE,
+        CONTROL_TYPE,
+        AMOUNT,
+        BALANCE_DIRECTION,
+        FREEZE_ID,
+        IS_CORRECT,
+        REMARK,
+        SUMMARY,
+        TRADE_FINISH_TIME,
+        CREATE_DATE,
+        UPDATE_DATE,
+        CREATE_BY,
+        UPDATE_BY,
+        ASS_CHECK_TYPE,
+        ASS_CHECK_CODE,
+        DEL_FLAG
+        )
+        <foreach collection="list" item="req" index="index" separator="UNION">
+            select
+            #{req.id,jdbcType=VARCHAR},
+            #{req.transId,jdbcType=VARCHAR},
+            #{req.accountId,jdbcType=VARCHAR},
+            #{req.accountType,jdbcType=VARCHAR},
+            #{req.voucherNo,jdbcType=VARCHAR},
+            #{req.isControl,jdbcType=VARCHAR},
+            #{req.controlValue,jdbcType=VARCHAR},
+            #{req.controlType,jdbcType=VARCHAR},
+            #{req.amount,jdbcType=DECIMAL},
+            #{req.balanceDirection,jdbcType=VARCHAR},
+            #{req.freezeId,jdbcType=VARCHAR},
+            #{req.isCorrect,jdbcType=VARCHAR},
+            #{req.remark,jdbcType=VARCHAR},
+            #{req.summary,jdbcType=VARCHAR},
+            #{req.tradeFinishTime},
+            #{req.createDate},
+            #{req.updateDate},
+            #{req.createBy,jdbcType=VARCHAR},
+            #{req.updateBy,jdbcType=VARCHAR},
+            #{req.assCheckType,jdbcType=VARCHAR},
+            #{req.assCheckCode,jdbcType=VARCHAR},
+            #{req.delFlag,jdbcType=VARCHAR}
+            from dual
+        </foreach>
+    </insert>
+    <select id="getSequence" resultType="java.lang.String" flushCache="true" useCache="false">
+        SELECT
+        LPAD(SUBSTR(PL_ACCOUNT_ENTRY_SEQUENCE.NEXTVAL,greatest( -8,-length(PL_ACCOUNT_ENTRY_SEQUENCE.NEXTVAL)),8),8,'0')
+        FROM dual
+    </select>
+    <update id="updateAccoutIdById" parameterType="com.haiercash.pluslink.capital.data.AccountEntry">
+        UPDATE PL_ACCOUNT_ENTRY SET ACCOUNT_ID = #{accountId},UPDATE_DATE = #{updateDate}
+        WHERE ID = #{id}
+        AND DEL_FLAG=#{delFlag}
+    </update>
+    <select id="selectAccountEntryByTransId" resultType="com.haiercash.pluslink.capital.data.AccountEntry">
+        select
+        <include refid="accountEntryColumns"/>
+        from PL_ACCOUNT_ENTRY where TRANS_ID=#{transId} AND DEL_FLAG=#{delFlag}
+    </select>
+
+    <insert id="insertAccountEntry" parameterType="com.haiercash.pluslink.capital.data.AccountEntry">
+        INSERT INTO PL_ACCOUNT_ENTRY(
+        ID,
+        TRANS_ID,
+        ACCOUNT_ID,
+        ACCOUNT_TYPE,
+        VOUCHER_NO,
+        IS_CONTROL,
+        CONTROL_VALUE,
+        CONTROL_TYPE,
+        AMOUNT,
+        BALANCE_DIRECTION,
+        FREEZE_ID,
+        IS_CORRECT,
+        REMARK,
+        SUMMARY,
+        TRADE_FINISH_TIME,
+        CREATE_DATE,
+        UPDATE_DATE,
+        CREATE_BY,
+        UPDATE_BY,
+        ASS_CHECK_TYPE,
+        ASS_CHECK_CODE,
+        DEL_FLAG
+        )VALUES (
+        #{id,jdbcType=VARCHAR},
+        #{transId,jdbcType=VARCHAR},
+        #{accountId,jdbcType=VARCHAR},
+        #{accountType,jdbcType=VARCHAR},
+        #{voucherNo,jdbcType=VARCHAR},
+        #{isControl,jdbcType=VARCHAR},
+        #{controlValue,jdbcType=VARCHAR},
+        #{controlType,jdbcType=VARCHAR},
+        #{amount,jdbcType=DECIMAL},
+        #{balanceDirection,jdbcType=VARCHAR},
+        #{freezeId,jdbcType=VARCHAR},
+        #{isCorrect,jdbcType=VARCHAR},
+        #{remark,jdbcType=VARCHAR},
+        #{summary,jdbcType=VARCHAR},
+        #{tradeFinishTime},
+        #{createDate},
+        #{updateDate},
+        #{createBy,jdbcType=VARCHAR},
+        #{updateBy,jdbcType=VARCHAR},
+        #{assCheckType,jdbcType=VARCHAR},
+        #{assCheckCode,jdbcType=VARCHAR},
+        #{delFlag,jdbcType=VARCHAR}
+        )
+    </insert>
+</mapper>

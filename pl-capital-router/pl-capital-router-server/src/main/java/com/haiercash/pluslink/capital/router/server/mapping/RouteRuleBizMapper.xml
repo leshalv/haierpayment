@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.haiercash.pluslink.capital.router.server.dao.RouteRuleBizDao">
+
+	<resultMap id="routeRuleAndItemResult" type="com.haiercash.pluslink.capital.data.RouteRuleItem">
+		<result column="FD_NUM" property="fdNum" jdbcType="VARCHAR"/>
+		<result column="FD_TYPE" property="fdType" jdbcType="VARCHAR"/>
+		<result column="RULE_CONTENT" property="ruleContent" jdbcType="VARCHAR"/>
+		<result column="MATE_RULE" property="mateRule" jdbcType="VARCHAR"/>
+		<result column="PRIORITY" property="priority" jdbcType="VARCHAR"/>
+		<result column="CHANNEL_ID" property="channelId" jdbcType="VARCHAR"/>
+		<result column="CHANNEL_PRODUCT_ID" property="channelProductId" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<select id="selectRouteRuleAndItemList" resultMap="routeRuleAndItemResult" parameterType="com.haiercash.pluslink.capital.data.RouteRuleItem">
+		SELECT
+		B.FD_NUM,
+		B.FD_TYPE,
+		B.RULE_CONTENT,
+		A.MATE_RULE,
+		A.CHANNEL_ID,
+		A.CHANNEL_PRODUCT_ID,
+		A.PRIORITY
+		FROM PL_ROUTE_RULE A LEFT JOIN PL_ROUTE_RULE_ITEM B ON A.FD_NUM = B.FD_NUM
+		<trim prefix="WHERE" prefixOverrides="and|or">
+			<if test="id!=null and id!=''">
+				AND B.ID = #{id,jdbcType=VARCHAR}
+			</if>
+			<if test="fdMainId!=null and fdMainId!=''">
+				AND B.FD_MAIN_ID = #{fdMainId,jdbcType=VARCHAR}
+			</if>
+			<if test="fdNum!=null and fdNum!=''">
+				AND B.FD_NUM = #{fdNum,jdbcType=VARCHAR}
+			</if>
+			<if test="fdType!=null and fdType!=''">
+				AND B.FD_TYPE = #{fdType,jdbcType=VARCHAR}
+			</if>
+			<if test="ruleContent!=null and ruleContent!=''">
+				AND B.RULE_CONTENT = #{ruleContent,jdbcType=VARCHAR}
+			</if>
+			<if test="createDate!=null and createDate!=''">
+				AND B.CREATE_DATE = #{createDate,jdbcType=VARCHAR}
+			</if>
+			<if test="updateDate!=null and updateDate!=''">
+				AND B.UPDATE_DATE = #{updateDate,jdbcType=VARCHAR}
+			</if>
+			<if test="createBy!=null and createBy!=''">
+				AND B.CREATE_BY = #{createBy,jdbcType=VARCHAR}
+			</if>
+			<if test="updateBy!=null and updateBy!=''">
+				AND B.UPDATE_BY =#{updateBy,jdbcType=VARCHAR}
+			</if>
+			<if test="delFlag!=null and delFlag!=''">
+				AND B.DEL_FLAG = #{delFlag,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</select>
+</mapper>

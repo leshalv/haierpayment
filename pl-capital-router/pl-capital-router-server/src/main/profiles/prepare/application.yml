@@ -1,0 +1,27 @@
+#封版环境测试配置
+haiercash:
+  pl:
+    profile: prepare
+
+server:
+  port: 7899
+
+redis:
+  cluster:
+    address: 10.164.197.32:7000,10.164.197.33:7000,10.164.197.34:7000
+
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@10.164.206.99:1521/plloandb
+    username: plloan
+    password: ENC(pdGVKsdhGvySQuIs3sNEjA==)
+
+eureka:
+  client:
+      serviceUrl:
+        defaultZone: http://10.164.197.32:1180/eureka/,http://10.164.197.33:1180/eureka/,http://10.164.197.34:1180/eureka/
+
+rest:
+  controller:
+    instance:
+      lastLoanQuery: ACRM

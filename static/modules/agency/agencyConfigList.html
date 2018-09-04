@@ -1,0 +1,153 @@
+<div data-container="listAgencyConfig">
+    <component is="bv-table" :key="tags.tableId" v-bind="config"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const'], function($, util, Const) {
+        var agencyTypeEnum = {};
+        var dictAll = Const.dicts;
+        $.ajax({
+            type: 'post',
+            url: '/capitalmanage/api/message/agencyType/getAgencyTypeList',
+            success: function(result) {
+                for(var i=0;i<result.data.length;i++){
+                    console.log(i+":"+JSON.stringify(result.data[i]));
+                    agencyTypeEnum[result.data[i]['agencyTypeId']]=result.data[i]['agencyTypeName'];
+                }
+                dictAll['agencyTypeStatus']=agencyTypeEnum;
+            }
+        });
+        var vm = util.bind({
+            container: 'listAgencyConfig',
+            data: {
+                tags: {
+                    tableId: 'agencyConfigTable'
+                },
+                config: {
+                    entityName: 'CooperationAgency',
+                    keys: 'id',
+                    select: 'checkbox',
+                    orders: 'createDate desc',
+                    filterLayout: 'filterMore',
+                    filterMore: true,
+                    columns: [
+                        {
+                            name: 'id',
+                            head: 'ID',
+                            filter: '='
+                        },
+                        {
+                            name: 'agencyName',
+                            head: '合作机构名称'
+                        },
+                        {
+                            name: 'agencyLiaisons',
+                            head: '合作机构联系人'
+                        },
+                        {
+                            name: 'agencyLiaisonsMobile',
+                            head: '合作机构联系人电话'
+                        },
+                        {
+                            name: 'agencyPriority',
+                            head: '优先级'
+                        },
+                        {
+                            name: 'cooperationStatus',
+                            head: '合作状态',
+                            format: 'dict',
+                            filter: {
+                                type: 'select'
+                            },
+                            config: {
+                                preset: 'json',
+                                choose: Const.dicts.PL0201
+                            }
+                        },
+                        {
+                            name: 'agencyType',
+                            head: '机构类型',
+                            format: 'dict',
+                            filter: {
+                                type: 'select'
+                            },
+                            config: {
+                                preset: 'json',
+                                choose: Const.dicts.agencyTypeStatus
+                            }
+                        },
+                        {
+                            name: 'createBy',
+                            head: '创建人'
+                        },
+                        {
+                            name: 'createDate',
+                            head: '创建时间'
+                        }
+                    ],
+                    operates: [
+                        {
+                            text: '新增',
+                            show: 'none',
+                            icon: 'icon-add',
+                            preset: 'insert',
+                            url: 'modules/agency/agencyConfigAdd.html'
+                        },
+                        {
+                            text: '编辑',
+                            show: 'one',
+                            icon:'icon-edit',
+                            preset: 'update',
+                            click: function(event, tableId, entityName, selected) {
+                                util.modal({
+                                    data: {
+                                        agencyId: selected[0].id,
+                                        agencyName: selected[0].agencyName,
+                                        agencyLiaisons: selected[0].agencyLiaisons,
+                                        agencyLiaisonsMobile: selected[0].agencyLiaisonsMobile,
+                                        agencyPriority: selected[0].agencyPriority,
+                                        cooperationStatus: selected[0].cooperationStatus,
+                                        agencyType: selected[0].agencyType
+                                    },
+                                    url: 'modules/agency/agencyConfigEdit.html',
+                                    refresh: true
+                                });
+                            }
+                        },
+                        {
+                            text: '删除',
+                            show: 'oneOrMore',
+                            icon:'icon-delete',
+                            preset: 'delete',
+                            click:function ($element, name, entityName, selected) {
+                                var idList=[];
+                                for(var i=0;i<selected.length;i++){
+                                    idList.push(selected[i]);
+                                }
+                                util.confirm({
+                                    url: '/agency/delAgency',
+                                    data: idList,
+                                    refresh: true,
+                                    vm: util.vm(vm, vm.tags.tableId)
+                                })
+                            }
+                        }
+//                        ,
+//                        {
+//                            text: '查看',
+//                            show: 'one',
+//                            click: function(event, tableId, entityName, selected) {
+//                                util.modal({
+//                                    data: {
+//                                        agencyId: selected[0].id
+//                                    },
+//                                    url: 'modules/agency/agencyConfigDetail.html'
+//                                });
+//                            }
+//                        }
+                    ]
+                }
+            }
+        });
+    });
+</script>
+

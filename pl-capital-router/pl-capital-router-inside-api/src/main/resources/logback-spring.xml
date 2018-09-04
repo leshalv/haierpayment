@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+
+    <springProperty name="APP" source="spring.application.name" defaultValue="Unknown"/>
+    <!--<springProperty scope="context" name="fluentHost" source="fluentd.host" defaultValue="localhost"/>-->
+    <!--<springProperty name="fluentPort" source="fluentd.port" defaultValue="24224"/>-->
+    <!--<define  name="HostName" class="com.haiercash.va.server.loging.LogIpPropertyDefiner" />-->
+
+    <property name="LOG_HOME" value="../app/applog/${APP}"/>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender" additivity="false">
+        <file>${LOG_HOME}/${APP}_detail.log</file>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${APP}_detail.log.%d{yyyyMMdd}</fileNamePattern>
+           <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender" additivity="false">
+        <File>${LOG_HOME}/${APP}_debug.log</File>
+        <encoder>
+            <pattern>%X{ip}-%d{yy-MM-dd.HH:mm:ss.SSS} [%-16t] %-5p %-22c{0} %X{ServiceId} - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${APP}_debug.log.%d{yyyyMMdd}</fileNamePattern>
+           <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+    <appender name="ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender" additivity="false">
+        <File>${LOG_HOME}/${APP}_access.log</File>
+        <encoder>
+            <pattern>%d{yy-MM-dd.HH:mm:ss.SSS};%X{ServiceId};%m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${APP}_access.log.%d{yyyyMMdd}</fileNamePattern>
+           <maxHistory>2</maxHistory>
+        </rollingPolicy>
+    </appender>
+    <appender name="INVOCATION" class="ch.qos.logback.core.rolling.RollingFileAppender" additivity="false">
+        <File>${LOG_HOME}/${APP}_invocation.log</File>
+        <encoder>
+            <pattern>%d{yy-MM-dd.HH:mm:ss.SSS};%X{ServiceId};%m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${APP}_invocation.log.%d{yyyyMMdd}</fileNamePattern>
+           <maxHistory>2</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <appender name="SERIOUS" class="ch.qos.logback.core.rolling.RollingFileAppender" additivity="false">
+        <File>${LOG_HOME}/${APP}_serious.log</File>
+        <encoder>
+            <pattern>%d{yy-MM-dd.HH:mm:ss.SSS};%X{ServiceId};%m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${APP}_serious.log.%d{yyyyMMdd}</fileNamePattern>
+           <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!--&lt;!&ndash;<appender name="FLUENT" class="ch.qos.logback.more.appenders.DataFluentAppender">-->
+        <!--<tag>dab</tag>-->
+        <!--<label>normal</label>-->
+        <!--<remoteHost>${fluentHost}</remoteHost>-->
+        <!--<port>${fluentPort}</port>-->
+        <!--<maxQueueSize>20</maxQueueSize>-->
+        <!--<additionalField>-->
+            <!--<key>app</key>-->
+            <!--<value>${APP}</value>-->
+        <!--</additionalField>-->
+        <!--<additionalField>-->
+            <!--<key>host</key>-->
+            <!--<value>${HostName}</value>-->
+        <!--</additionalField>-->
+    <!--</appender>&ndash;&gt;-->
+
+    <logger name="org.apache.httpclient.wire" level="INFO"/>
+    <logger name="org.apache.commons.httpclient" level="INFO"/>
+    <logger name="org.apache.zookeeper" level="INFO"/>
+    <logger name="io.shardingjdbc.core" level="DEBUG"/>
+    <logger name="io.shardingjdbc.spring.boot" level="DEBUG"/>
+    <logger name="com.haiercash" level="DEBUG">
+        <appender-ref ref="DEBUG"/>
+    </logger>
+    <root level="WARN">
+        <appender-ref ref="CONSOLE" />
+        <!--<appender-ref ref="FLUENT" />-->
+        <appender-ref ref="FILE" />
+        <appender-ref ref="SERIOUS"/>
+    </root>
+</configuration>
+
+
+
+
+
+
+        <!--<appender name="FILE"-->
+        <!--class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+        <!--<encoder>-->
+        <!--<pattern>${FILE_LOG_PATTERN}</pattern>-->
+        <!--</encoder>-->
+        <!--<file>${LOG_FILE}</file>-->
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">-->
+        <!--<fileNamePattern>${LOG_FILE}.%i</fileNamePattern>-->
+        <!--</rollingPolicy>-->
+        <!--<triggeringPolicy-->
+        <!--class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">-->
+        <!--<MaxFileSize>10MB</MaxFileSize>-->
+        <!--</triggeringPolicy>-->
+        <!--</appender>-->

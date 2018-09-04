@@ -1,0 +1,60 @@
+<!-- 数据字典list -->
+<div data-container="dictionaryConfigList">
+    <component is="bv-table" :key="tags.tableId" v-bind="config"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const'], function($, util, Const) {
+        var vm = util.bind({
+            container: 'dictionaryConfigList',
+            data: {
+                tags: {
+                    tableId: 'dictionaryConfigTable'
+                },
+                config: {
+                    entityName: 'Dictionary',
+                    keys: 'id',
+                    select: 'checkbox',
+                    orders: 'createDate desc',
+                    filterLayout: 'filterMore',
+                    filterMore: true,
+                    columns: [
+                        {
+                            name: 'id',
+                            head: 'ID',
+                            filter: '='
+                        },
+                        {
+                            name: 'dictionaryName',
+                            head: '数据字典大类名称'
+                        },
+                        {
+                            name: 'title',
+                            head: '码值显示标题'
+                        },
+                        {
+                            name: 'operate',
+                            head: '操作',
+                            type: 'operate',
+                            align: 'center',
+                            operates: [
+                                {
+                                    text: '修改数据字典子类',
+                                    click: function(event, tableId, entityName, selected) {
+                                        util.modal({
+                                            url: 'modules/msgRequest/listMsgRequestUser.html?requestId=' + selected[0].id
+                                        });
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    operates: [
+
+                    ]
+                }
+            }
+        });
+    });
+</script>
+
+

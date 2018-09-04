@@ -1,0 +1,55 @@
+/**
+ * 编译JAR包并推送到maven仓库
+ * snapshot版本：gradle clean build publish
+ *      发布到开发环境环境：snapshot版本：gradle clean build -x test -Pprofile=dev publish
+ *      发布到功能环境：snapshot版本：gradle clean build -x test -Pprofile=beta publish
+ * release版本：gradle clean build -x test -Prelease -Pprofile=product  publish
+ *      生产版本：gradle clean build -x test -Prelease -Pprofile=product  publish
+ *      预发布版本：gradle clean build -x test -Prelease -Pprofile=prepare  publish
+ */
+apply plugin: 'maven-publish'
+
+publishing {
+    repositories {
+        if (project.releasePublish) {
+            maven {
+                url "http://10.164.194.139:8081/nexus/content/repositories/releases/"
+                credentials {
+                    username = NEXUS_USERNAME   // from ~/.gradle/gradle.properties
+                    password = NEXUS_PASSWORD   // from ~/.gradle/gradle.properties
+                }
+            }
+        } else {
+            maven {
+                url "http://10.164.194.139:8081/nexus/content/repositories/snapshots/"
+                credentials {
+                    username = NEXUS_USERNAME   // from ~/.gradle/gradle.properties
+                    password = NEXUS_PASSWORD   // from ~/.gradle/gradle.properties
+                }
+            }
+        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = project.group
+
+            if (!project.releasePublish) {
+                version version + "-SNAPSHOT"
+            }
+
+            if (PROJECT_TYPE == "exec") {
+                artifacts = ["build/libs/${project.name}-${version}" + "-exec.jar"]
+                artifactId = project.name + "-exec"
+            } else {
+                artifacts = ["build/libs/${project.name}-${version}" + ".jar"]
+                artifactId = project.name
+            }
+           /* pom.withXml {
+                asNode().appendNode('description', POM_DESCRIPTION)
+            }*/
+        }
+    }
+}
+
+publish.dependsOn(build)
+publishToMavenLocal.dependsOn(build)

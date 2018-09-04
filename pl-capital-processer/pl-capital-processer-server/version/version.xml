@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<version xmlns="http://www.example.org/version-config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.example.org/version-config ../../../version.xsd">
+    <modifies>
+        <modify>
+            <description>初始化项目</description>
+            <author>肖斌</author>
+            <revision-time>2018-07-03</revision-time>
+            <baseline>V1.0.0.R.20180703</baseline>
+        </modify>
+    </modifies>
+</version>

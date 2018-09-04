@@ -1,0 +1,141 @@
+allprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'maven'
+    apply plugin: "io.spring.dependency-management"
+
+    sourceCompatibility = 1.8
+    ext {
+        // project的额外属性，这里用于定义profile属性，模拟maven的profile
+        //多环境配置
+        if (project.hasProperty('profile')) {
+            profile = project['profile']
+        } else {
+            profile = "dev"
+        }
+        snippetsDir = file("$buildDir/generated-snippets")
+    }
+    configurations.all {
+        //默认情况下包才上传后24小时更新一次，这个配置自动更新为10s
+        //10秒钟，可自定义，如10,'minutes'10分钟，10,'hours'10小时
+        resolutionStrategy.cacheChangingModulesFor 10, 'seconds'
+    }
+
+    group = 'com.haiercash.pluslink.capital'
+    version = '1.0.0'
+}
+
+buildscript {
+    ext {
+        springBootVersion = '1.5.6.RELEASE'
+        jbinfoCloudParentVersion = '1.0.0.1-20180413-040'
+        springCloudVersion = 'Dalston.SR5'
+        springCloudStreamVersion = 'Ditmars.SR2'
+        releasePublish = project.hasProperty('release')
+        println "releasePublish:${releasePublish}"
+    }
+    repositories {
+        mavenLocal()
+        maven { url 'http://10.164.194.139:8081/nexus/content/repositories/public/' }
+        maven { url "https://repo.spring.io/libs-milestone" }
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public" }
+    }
+    dependencies {
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.5.RELEASE"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.6.RELEASE"
+    }
+}
+
+
+
+subprojects {
+    repositories {
+        mavenLocal()
+        maven { url 'http://10.164.194.139:8081/nexus/content/repositories/public/' }
+        maven { url 'http://10.164.194.139:8081/nexus/content/repositories/thirdparty/' }
+        if (releasePublish) {
+            maven { url 'http://10.164.194.139:8081/nexus/content/repositories/releases/' }
+        } else {
+            maven { url 'http://10.164.194.139:8081/nexus/content/repositories/snapshots/' }
+        }
+        flatDir {
+            dirs 'lib'
+        }
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "cn.jbinfo.parent.api:jbinfo-cloud-api-parent:${jbinfoCloudParentVersion}"
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+            mavenBom "org.springframework.cloud:spring-cloud-stream-dependencies:${springCloudStreamVersion}"
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDir 'src/main/java'
+            }
+            resources {
+                srcDirs 'src/main/java'
+            }
+        }
+        main {
+            resources {
+                srcDir "src/main/profiles/${profile}"
+            }
+        }
+    }
+    test {
+        outputs.dir snippetsDir
+    }
+
+    dependencies {
+        if (releasePublish) {
+            compile("com.haiercash.common:haiercash-common-jedis:1.0.0")
+        } else {
+            compile("com.haiercash.common:haiercash-common-jedis:1.0.0-SNAPSHOT")
+        }
+
+        //==依赖==
+        compile group: 'org.jodd', name: 'jodd', version: '3.3.8'
+        compile('org.springframework.cloud:spring-cloud-starter-eureka')
+        compile('org.springframework.cloud:spring-cloud-starter-feign')
+        compile('org.springframework.cloud:spring-cloud-starter-zuul')
+        compile('org.springframework.session:spring-session')
+
+        compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+        compile('org.springframework.boot:spring-boot-starter-security')
+//        compile('org.springframework.boot:spring-boot-starter-data-jpa')
+//        compile('org.springframework.boot:spring-boot-starter-data-redis')
+//        compile('org.springframework.boot:spring-boot-starter-data-rest')
+//        compile('org.springframework.boot:spring-boot-starter-amqp')
+        compile('org.springframework.boot:spring-boot-starter-mail')
+        compile('org.springframework.cloud:spring-cloud-starter-oauth2')
+        compile('com.github.ulisesbocchio:jasypt-spring-boot-starter:1.14')
+
+        // json
+        compile("com.alibaba:fastjson:1.2.16")
+        //信鸽
+        compile files('../lib/XingeApp.jar')
+        // 数据库连接
+        compile("org.springframework.boot:spring-boot-starter-jdbc")
+        compile("com.oracle:ojdbc6:11g")
+        compile("com.bestvike:bv-mybatis:3.4.5.1")
+        compile("org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final")
+
+        //==运行时==
+        runtime('org.springframework.boot:spring-boot-devtools')
+        //==编译时==
+        compileOnly('org.springframework.boot:spring-boot-configuration-processor')
+        compileOnly('org.projectlombok:lombok')
+        //==测试时==
+        testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: "${springBootVersion}") {
+            exclude(module: 'commons-logging')
+        }
+        testCompile('org.projectlombok:lombok')
+    }
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+}

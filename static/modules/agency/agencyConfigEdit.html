@@ -1,0 +1,100 @@
+<div v-cloak data-container="agencyConfigEdit">
+    <component is="bv-form" :key="tags.formId" v-bind="config"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const'], function ($, util, Const) {
+        var param = util.cache('modal');
+		var vm = util.bind({
+			container: 'agencyConfigEdit',
+			data: {
+				tags: {
+					formId: 'agencyConfigEditForm'
+				},
+				config: {
+					title: '修改机构配置',
+					saveUrl: '/agency/updateAgency',
+					formGenerator: 'id',
+					columns: [
+						{
+							name: 'id',
+							head: '机构ID',
+							config: {
+								value: param.agencyId
+							},
+							edit: {
+							    type: 'hidden'
+							}
+						},
+						{
+							name: 'agencyName',
+							head: '合作机构名称',
+							config: {
+								value: param.agencyName
+							}
+						},
+						{
+							name: 'agencyLiaisons',
+							head: '合作机构联系人',
+							config: {
+								value: param.agencyLiaisons
+							}
+						},
+						{
+							name: 'agencyLiaisonsMobile',
+							head: '联系人电话',
+							config: {
+								value: param.agencyLiaisonsMobile
+							}
+						},
+						{
+							name: 'cooperationStatus',
+							head: '合作状态',
+                            edit:{
+                                type: 'select'
+                            },
+                            config: {
+                                defaultValue: param.cooperationStatus,
+                                preset: 'json',
+                                choose: Const.dicts.PL0201,
+                                validate: {
+                                    required: true
+                                }
+                            }
+						},
+						{
+							name: 'agencyPriority',
+							head: '优先级',
+							config: {
+								value: param.agencyPriority
+							}
+						},
+						{
+							name: 'agencyType',
+							head: '机构类型',
+                            edit:{
+                                type: 'select'
+                            },
+                            config: {
+                                defaultValue: param.agencyType,
+                                preset: 'json',
+                                choose: Const.dicts.agencyTypeStatus,
+                                validate: {
+                                    required: true
+                                }
+                            }
+						}
+					],
+					operates: [
+						{
+                            text: '保存',
+                            clazz: 'btn-primary',
+                            icon: 'icon-save',
+                            loading: '处理中...',
+                            preset: 'save'
+                        }
+					]
+				}
+			}
+		});
+	});
+</script>

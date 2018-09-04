@@ -1,0 +1,27 @@
+#开发环境配置
+haiercash:
+  pl:
+    profile: dev
+
+server:
+  port: 7896
+
+redis:
+  cluster:
+    address: 10.164.197.209:7000,10.164.197.208:7000,10.164.197.202:7000
+
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@10.164.204.106:1521/plloandb
+    username: PLLOAN_DEV
+    password: ENC(p4vVAuCTkrnrUgsIOd55YZud9KMltXWg)
+
+eureka:
+  client:
+      serviceUrl:
+        defaultZone: http://10.164.197.208:1180/eureka/,http://10.164.197.209:1180/eureka/
+
+rest:
+  controller:
+    instance:
+      lastLoanQuery: ACRM

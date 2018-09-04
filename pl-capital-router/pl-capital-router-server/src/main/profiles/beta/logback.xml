@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <property name="LOG_PATH" value="/export/home/app/applog/beta/pl-capital-router-server"/>
+    <property name="DATE" value="%d{yyyyMMdd}"/>
+    <property name="LOG_NAME" value="PL_CAPITAL_ROUER"/>
+    <property name="LOG_HOME" value="${LOG_PATH}/${DATE}"/>
+
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%d{HH:mm:ss.SSS}][%5level][%thread][%logger{30}] : %msg%n</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+
+    <appender name="MAIN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${LOG_NAME}_MAIN_${DATE}.%i.log</fileNamePattern>
+            <maxHistory>90</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>20MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] [%level] %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ROUTE_MATCH" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${LOG_NAME}_ROUTER_MATCH_${DATE}.%i.log</fileNamePattern>
+            <maxHistory>90</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>20MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] [%level] %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="GENERAL_QUERY" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${LOG_NAME}_GENERAL_QUERY_${DATE}.%i.log</fileNamePattern>
+            <maxHistory>90</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>20MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] [%level] %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="API" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${LOG_NAME}_API_${DATE}.%i.log</fileNamePattern>
+            <maxHistory>90</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>20MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] [%level] %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="CACHE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${LOG_NAME}_CACHE_${DATE}.%i.log</fileNamePattern>
+            <maxHistory>90</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>20MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] [%level] %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.apache.httpclient.wire" level="INFO"/>
+    <logger name="org.apache.commons.httpclient" level="INFO"/>
+    <logger name="org.apache.zookeeper" level="INFO"/>
+    <logger name="io.shardingjdbc.core" level="INFO"/>
+    <logger name="io.shardingjdbc.spring.boot" level="INFO"/>
+    <logger name="com.haiercash" level="${logging.level.haiercash}"/>
+    <logger name="java.sql.Connection" level="${logging.level.sql}"/>
+    <logger name="java.sql.PreparedStatement"  level="${logging.level.sql}"/>
+    <logger name="java.sql.ResultSet" level="${logging.level.sql}"/>
+
+    <root level="${logging.level.root}">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="MAIN" />
+    </root>
+    <!--ROUTER_MATCH-->
+    <logger name="com.haiercash.pluslink.capital.router.server.api.controller.RouterController" level="INFO" >
+        <appender-ref ref="ROUTE_MATCH" />
+    </logger>
+    <logger name="com.haiercash.pluslink.capital.router.server.biz.impl.FundRouteRuleBizImpl" level="INFO" >
+        <appender-ref ref="ROUTE_MATCH" />
+    </logger>
+    <logger name="com.haiercash.pluslink.capital.router.server.component.impl.RouteRuleMatchComponentImpl" level="INFO" >
+        <appender-ref ref="ROUTE_MATCH" />
+    </logger>
+    <logger name="com.haiercash.pluslink.capital.router.server.service.impl.RouterMatchDataServiceImpl" level="INFO" >
+        <appender-ref ref="ROUTE_MATCH" />
+    </logger>
+
+    <!--GENERAL_QUERY-->
+    <logger name="com.haiercash.pluslink.capital.router.server.api.controller.GeneralInfoController" level="INFO" >
+        <appender-ref ref="GENERAL_QUERY" />
+    </logger>
+    <logger name="com.haiercash.pluslink.capital.router.server.biz.impl.ApiQueryBizImpl" level="INFO" >
+        <appender-ref ref="GENERAL_QUERY" />
+    </logger>
+
+    <!--CACHE-->
+    <logger name="com.haiercash.pluslink.capital.router.server.cache" level="INFO" >
+        <appender-ref ref="CACHE" />
+    </logger>
+
+    <!--API-->
+    <!--inParam-->
+    <logger name="cn.jbinfo.aop.ControllerInterceptor" level="INFO" >
+        <appender-ref ref="API" />
+    </logger>
+    <!--outParam-->
+    <logger name=" cn.jbinfo.api.interceptor.PushLogRoundImpl" level="INFO" >
+        <appender-ref ref="API" />
+    </logger>
+    <logger name="com.haiercash.pluslink.capital.router.server.rest.controller.impl.ILastLoanImpl" level="INFO" >
+        <appender-ref ref="API" />
+    </logger>
+</configuration>

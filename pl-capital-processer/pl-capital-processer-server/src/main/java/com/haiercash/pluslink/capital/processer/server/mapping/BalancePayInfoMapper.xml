@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haiercash.pluslink.capital.processer.server.dao.BalancePayRequestInfoDao" >
+  <select id="getSequence" resultType="java.lang.String">
+    SELECT
+    LPAD(SUBSTR(PL_BALANCE_PAY_INFO_SEQUENCE.NEXTVAL,greatest( -8,-length(PL_BALANCE_PAY_INFO_SEQUENCE.NEXTVAL)),8),8,'0')
+    FROM
+    dual
+  </select>
+  <insert id="insertBalancePayRequestInfo">
+    insert into PL_BALANCE_PAY_INFO (ID, ASSETS_SPLIT_ID, CRM_TYPE,
+    CUST_NAME, CERT_NO, VA_TYPE,
+    PAY_AMT, CREATE_DATE, UPDATE_DATE,
+    CREATE_BY, UPDATE_BY, DEL_FLAG,CRM_NO)
+    SELECT aa.ID, aa.ASSETS_SPLIT_ID,aa.CRM_TYPE,aa.CUST_NAME,aa.CERT_NO,aa.VA_TYPE,
+    aa.PAY_AMT,aa.CREATE_DATE,aa.UPDATE_DATE,aa.CREATE_BY,aa.UPDATE_BY,aa.DEL_FLAG,aa.CRM_NO
+    FROM(
+    <foreach collection="balancePayRequestInfos" item="model" index="index" separator="UNION ALL">
+      SELECT
+      #{model.id} ID,
+      #{model.assetsSplitId} ASSETS_SPLIT_ID,
+      #{model.crmType} CRM_TYPE,
+      #{model.custName} CUST_NAME,
+      #{model.certNo} CERT_NO,
+      #{model.vaType} VA_TYPE,
+      #{model.payAmt} PAY_AMT,
+      #{model.createDate} CREATE_DATE,
+      #{model.updateDate} UPDATE_DATE,
+      #{model.updateBy} UPDATE_BY,
+      #{model.createBy} CREATE_BY,
+      #{model.delFlag} DEL_FLAG,
+      #{model.crmNo} CRM_NO
+      FROM dual
+    </foreach>
+    ) aa
+  </insert>
+</mapper>

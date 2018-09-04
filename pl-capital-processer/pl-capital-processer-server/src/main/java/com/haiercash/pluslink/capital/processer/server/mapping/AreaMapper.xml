@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haiercash.pluslink.capital.processer.server.dao.AreaDao">
+
+    <!--根据合作机构编号、身份证号查询额度编号 1:额度返回；2：授信申请中；0：作废-->
+    <select id="selectById" resultType="com.haiercash.pluslink.capital.data.Area">
+        SELECT id,area_name,parent_code  FROM PL_Area  WHERE  id = #{id}
+    </select>
+</mapper>
